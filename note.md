@@ -338,13 +338,14 @@ Try every combination of all items, then choose one combination with maximum pro
 2. Recurrence relation:  
     $F(\{A, B, C, D\}, W)$ represents the maximum profit of item {A, B, C, D} under weight limit W, is the larger value of:
     * the solution includes item A
-    * the solution excludes item A  
+    * the solution excludes item A
+
 $$
 F(\{A, B, C, D\}, W)\ =\ MAX(F(\{B, C, D\}, W-W_A) + P_A,\ F(\{B, C, D\}, W))
 $$  
 
     This shows the characteristic of Optimal Substructure.  
-3. Code:   
+1. Code:   
     ```python
     def knapsack(profits, weights, capacity, index):
         if index ==  len(profits) or capacity <= 0:
@@ -360,7 +361,7 @@ $$
         profit2 = knapsack(profits, weights, capacity, index + 1)
         return max(profit1, profit2)
     ```
-4. Overlapping subproblem:  
+2. Overlapping subproblem:  
     By logging each call of the function, we can find function was called twice with identical arguments (overlapping subproblem). The number of duplicated calls will increase as number of items increase. Therefore we can use Memorization to optimize. The optimized complexity would be $O(N\times C)$, where N is the nuber of items, C is the capacity.
     ```
     call:1 capacity:1 skipped:3 profit:0
