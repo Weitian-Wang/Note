@@ -80,8 +80,14 @@ Given an **sorted** (ascending) array of integer `nums` and a integer `target`, 
     > ```
     However, while recursion is easier to understand and to implement, it's slower than iteration (at least in Java, C and Python).
 #### Complexity
-Average
-Best/Worst
+The solution eliminates half of the array each iteration, until converge to a single element.
+$$
+2^{\text{\#iteration}}=n\\ 
+\text{\#iteration}\ =\ \log_2 n 
+$$
+1. Average: $O(\log n)$  
+2. Best-case: When the target is in the middle of array, $O(1)$.
+3. Worst-case: When the target is at either extremity of the array, the solution will go through all $\log_{2}{n}$ iterations.
 ### Variant.1 First Bad Version
 > [Leetcode: 278. First Bad Version](https://leetcode.com/problems/first-bad-version/)  
 
@@ -363,7 +369,7 @@ Try every combination of all items, then choose one combination with maximum pro
 1. Idea  
     Define 2-D array `dp[N][C+1]`, as used in optimized [solution.1](#solution1-basic-brute-force). `dp[i][c]` will represent the maximum knapsack profit for capacity `c` calculated from the **first `i` items** (item 0 to i).  
     > Note: The key is to understand the meaning of `dp[i][c]`, and the relation with previous elements.  
-	
+
     For each `i` and `c`, we choose the maximum from two options:  
     1. Exclude current item, use previous profit: `dp[i-1][c]`
     2. Include current item, plus previous profits with current weight subtracted: `profits[i] + dp[i-1][c-weights[i]]`  

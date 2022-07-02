@@ -13,4 +13,4 @@ def knapsack(profits, weights, capacity):
 profits = [4, 5, 3, 7]
 weights = [2, 3, 1, 4]
 capacity = 7
-print(knapsack(profits, weights, capacity))
+print(knapsack(profits, weights, capacity))    
