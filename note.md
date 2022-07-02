@@ -331,12 +331,12 @@ Try every combination of all items, then choose one combination with maximum pro
      profit: 9          profit: 4
     ```  
 2. Recurrence relation:  
-    F(\{A, B, C, D\}, W)$ represents the maximum profit of item {A, B, C, D} under weight limit W, is the larger value of:
+    $F(\{A, B, C, D\}, W)$ represents the maximum profit of item {A, B, C, D} under weight limit W, is the larger value of:
     . the solution includes item A
     . the solution excludes item A
-    $
+    $$
     (\{A, B, C, D\}, W)\ =\ MAX(F(\{B, C, D\}, W-W_A) + P_A,\ F(\{B, C, D\}, W))
-    $  
+    $$
     his shows the characteristic of Optimal Substructure.  
 3. Code:   
     ```python
@@ -425,7 +425,7 @@ Try every combination of all items, then choose one combination with maximum pro
     ```
 #### Complexity  
 1. Brute Force  
-    For a recursive problem with recurrence relation like $F(n) = \begin{cases}F(n-1)\\ F(n-2)\end{cases}$, the time complexity using brute force is $O(2^{n+1}-1)$, which is asymptotically equivalent to $O(2^n)$. Space complexity $O(n)$ is the depth of recursion stack. 
+    For a recursive problem with recurrence relation like $F(n) = \begin{cases}F(n-1)\\ \\ F(n-2)\end{cases}$, the time complexity using brute force is $O(2^{n+1}-1)$, which is asymptotically equivalent to $O(2^n)$. Space complexity $O(n)$ is the depth of recursion stack. 
     > Note:
     > Decision tree is a **perfect binary tree** of depth `n`.  
     > Number of nodes is $S_n\ =\ \frac{a_1(1-r^n)}{1-r} = 2^{n+1}-1$   
