@@ -80,7 +80,7 @@ Given an **sorted** (ascending) array of integer `nums` and a integer `target`, 
     > ```
     However, while recursion is easier to understand and to implement, it's slower than iteration (at least in Java, C and Python).
 #### Complexity
-The solution eliminates half of the array each iteration, until converge to a single element.
+The solution eliminates half of the array each iteration, until converge to a single element.  
 $$
 2^{\text{\#iteration}}=n\\ 
 \text{\#iteration}\ =\ \log_2 n 
@@ -332,12 +332,12 @@ Try every combination of all items, then choose one combination with maximum pro
     ```  
 2. Recurrence relation:  
     $F(\{A, B, C, D\}, W)$ represents the maximum profit of item {A, B, C, D} under weight limit W, is the larger value of:
-    . the solution includes item A
-    . the solution excludes item A
+    * the solution includes item A
+    * the solution excludes item A  
     $$
     (\{A, B, C, D\}, W)\ =\ MAX(F(\{B, C, D\}, W-W_A) + P_A,\ F(\{B, C, D\}, W))
     $$
-    his shows the characteristic of Optimal Substructure.  
+    This shows the characteristic of Optimal Substructure.  
 3. Code:   
     ```python
     def knapsack(profits, weights, capacity, index):
