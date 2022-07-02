@@ -82,8 +82,10 @@ Given an **sorted** (ascending) array of integer `nums` and a integer `target`, 
 #### Complexity
 The solution eliminates half of the array each iteration, until converge to a single element.  
 $$
-2^{\text{\#iteration}}=n\\ 
-\text{\#iteration}\ =\ \log_2 n 
+2^{\text{iteration}}=n
+$$
+$$
+\text{iteration}\ =\ \log_2 n 
 $$
 1. Average: $O(\log n)$  
 2. Best-case: When the target is in the middle of array, $O(1)$.
@@ -334,9 +336,9 @@ Try every combination of all items, then choose one combination with maximum pro
     $F(\{A, B, C, D\}, W)$ represents the maximum profit of item {A, B, C, D} under weight limit W, is the larger value of:
     * the solution includes item A
     * the solution excludes item A  
-    $$
-    (\{A, B, C, D\}, W)\ =\ MAX(F(\{B, C, D\}, W-W_A) + P_A,\ F(\{B, C, D\}, W))
-    $$
+$$
+F(\{A, B, C, D\}, W)\ =\ MAX(F(\{B, C, D\}, W-W_A) + P_A,\ F(\{B, C, D\}, W))
+$$
     This shows the characteristic of Optimal Substructure.  
 3. Code:   
     ```python
