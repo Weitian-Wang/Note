@@ -81,12 +81,15 @@ Given an **sorted** (ascending) array of integer `nums` and a integer `target`, 
     However, while recursion is easier to understand and to implement, it's slower than iteration (at least in Java, C and Python).
 #### Complexity
 The solution eliminates half of the array each iteration, until converge to a single element.  
+
 $$
 2^{\text{iteration}}=n
 $$
+
 $$
 \text{iteration}\ =\ \log_2 n 
 $$
+
 1. Average: $O(\log n)$  
 2. Best-case: When the target is in the middle of array, $O(1)$.
 3. Worst-case: When the target is at either extremity of the array, the solution will go through all $\log_{2}{n}$ iterations.
@@ -338,7 +341,8 @@ Try every combination of all items, then choose one combination with maximum pro
     * the solution excludes item A  
 $$
 F(\{A, B, C, D\}, W)\ =\ MAX(F(\{B, C, D\}, W-W_A) + P_A,\ F(\{B, C, D\}, W))
-$$
+$$  
+
     This shows the characteristic of Optimal Substructure.  
 3. Code:   
     ```python
