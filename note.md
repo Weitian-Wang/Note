@@ -24,7 +24,8 @@
 			- [Complexity](#complexity-1)
 		- [Example.3 Coin Change](#example3-coin-change)
 			- [Solution](#solution-4)
-		- [Example.4 Longest Common Substring](#example4-longest-common-substring)
+		- [Example.4 Longest Common Subsequence](#example4-longest-common-subsequence)
+			- [Solution](#solution-5)
 		- [Conclusion](#conclusion)
 	- [Sort](#sort)
 	- [Recursion](#recursion)
@@ -283,6 +284,7 @@ Start from smallest subproblems, F(0) and F(1).
     Calculate number at next position, store results of subproblems in DP array.
     ```python
     # index 0 to n
+	# !IMPORTANT!
     # range(start, end) -> [start, end) -> s, s+1, ..., e-2, e-1
     # range(end) -> [0, end) -> 0, 1, ..., end-1
     for i in range(2, n+1):
@@ -474,7 +476,7 @@ Try every combination of all items, then choose one combination with maximum pro
 2. Optimized  
     After optimization, Memorization (top-down) or DP-Tabulation (bottom-up) has a space & time complexity of $O(N\times C)$, where $N$ represent total items and $C$ is the maximum capacity. 
 ### Example.3 Coin Change
-> Leetcode: [322. Coin Change](https://leetcode.com/problems/coin-change/)  
+> [Leetcode: 322. Coin Change](https://leetcode.com/problems/coin-change/)  
 
 Given an integer array `coins` representing coins of different denominations and an integer `amount` representing target amount of money. Return the **minimum** number of coins needed to make up that amount. If the total amount can not be made up by any combination of coins, return -1. Each coin can be used infinite times.  
 Example:  
@@ -531,9 +533,69 @@ explain 11 = 5 + 5 + 1
 	```
 	> Note: Trick  
 	> We can set `MAX = amount + 1`.
-### Example.4 Longest Common Substring
+### Example.4 Longest Common Subsequence
+> [Leetcode: 1143. Longest Common Subsequence](https://leetcode.com/problems/longest-common-subsequence/)
+
+Given two strings `text1` and `text2`, return the length of their longest common subsequence.  
+Example:  
+```
+text1 = "abcde"
+text2 = "ace" 
+=> longest common subsquence = "ace", length = 3
+```  
+#### Solution
+1. Mathematical Notation  
+`text1` = $\{a_1, a_2, a_3, ..., a_m\}$  
+`text2` = $\{b_1, b_2, b_3, ..., b_n\}$  
+where `m` and the length of `text1` and `n` is length of `text2`.  
+	> Note: Be careful about dimensions and indices, start from 0 or 1.  
+
+2. Define 2-D DP Array  
+Define `DP[m+1][n+1]`.  
+`DP[i][j]` represents the length of LCS between $\{a_1, a_2, a_3, ..., a_i\}$ and $\{b_1, b_2, b_3, ..., b_j\}$, which is the first `i` and `j` characters of `text1` and `text2` respectively.
+	```
+	\j
+	i\   0   1   2   3            i
+	   ┌───┬───┬───┬───┐          │
+	0  │ 0 │ 0 │ 0 │ 0 │          ▼
+	   ├───┼───┼───┼───┤    text1 a b c d e
+	1  │ 0 │ 0 │ 0 │ 0 │          1 2 3 4 5
+	   ├───┼───┼───┼───┤
+	2  │ 0 │ 0 │ 0 │ 0 │
+	   ├───┼───┼───┼───┤
+	3  │ 0 │ 0 │ 0 │ 0 │          j
+	   ├───┼───┼───┼───┤          │
+	4  │ 0 │ 0 │ 0 │ 0 │          ▼
+	   ├───┼───┼───┼───┤    text2 a c e
+	5  │ 0 │ 0 │ 0 │ 0 │          1 2 3
+	   └───┴───┴───┴───┘
+	```
+3. Relation Function  
+Fill out DP array according to the following rule:  
+* if $a_i$ == $b_j$, `dp[i][j] = dp[i-1][j-1] + 1`
+* else `dp[i][j] = max(dp[i-1][j], dp[i][j-1])`  
+4. Completed DP Array  
+`dp[m][n]` is the solution of the original problem.
+	```
+	\j
+	i\   0   1   2   3                    i
+	   ┌───┬───┬───┬───┐                  │
+	0  │ 0 │ 0 │ 0 │ 0 │                  ▼
+	   ├───┼───┼───┼───┤    text1 a b c d e
+	1  │ 0 │ 1 │ 1 │ 1 │          1 2 3 4 5
+	   ├───┼───┼───┼───┤
+	2  │ 0 │ 1 │ 1 │ 1 │
+	   ├───┼───┼───┼───┤
+	3  │ 0 │ 1 │ 2 │ 2 │              j
+	   ├───┼───┼───┼───┤              │
+	4  │ 0 │ 1 │ 2 │ 2 │              ▼
+	   ├───┼───┼───┼───┤    text2 a c e
+	5  │ 0 │ 1 │ 2 │ 3 │          1 2 3
+	   └───┴───┴───┴───┘
+	```
 ### Conclusion
-start from brute force (**recursive**, decision tree), then optimize top down with memorization, then come up with bottom up dynamic programming technique.
+start from brute force (**recursive**, decision tree), then optimize top down with memorization, then come up with bottom up dynamic programming technique.  
+
 ## Sort
 ## Recursion
 ## Backtack
