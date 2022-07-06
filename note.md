@@ -1,5 +1,3 @@
-# Table of Contents
-- [Table of Contents](#table-of-contents)
 - [Algorithm](#algorithm)
 	- [Binary Search](#binary-search)
 		- [Basic Version](#basic-version)
@@ -24,6 +22,9 @@
 			- [Solution.1 Basic Brute Force](#solution1-basic-brute-force)
 			- [Solution.2 Dynamic Programming](#solution2-dynamic-programming)
 			- [Complexity](#complexity-1)
+		- [Example.3 Coin Change](#example3-coin-change)
+			- [Solution](#solution-4)
+		- [Example.4 Longest Common Substring](#example4-longest-common-substring)
 		- [Conclusion](#conclusion)
 	- [Sort](#sort)
 	- [Recursion](#recursion)
@@ -115,12 +116,13 @@ Given an **sorted** (ascending) array of integer `nums` and a integer `target`, 
     > ```
     However, while recursion is easier to understand and to implement, it's slower than iteration (at least in Java, C and Python).
 #### Complexity
-The solution eliminates half of the array each iteration, until converge to a single element.
+The solution eliminates half of the array at each iteration, until converge to a single element.
 $$ 2^{\text{iteration}}=n $$
 $$ \text{iteration}\ =\ \log_2 n$$
 1. Average: $O(\log n)$  
 2. Best-case: When the target is in the middle of array, $O(1)$.
 3. Worst-case: When the target is at either extremity of the array, the solution will go through all $\log_{2}{n}$ iterations.
+   > Note: $\log_{a}{b}$ is pronounced "log base `a` of `b`".
 ### Variant.1 First Bad Version
 > [Leetcode: 278. First Bad Version](https://leetcode.com/problems/first-bad-version/)  
 
@@ -129,7 +131,7 @@ Instead of sorted list, we have `n` versions `[1, 2, 3, ..., n]`, objective is t
 Ver.No   1  2  3  4  ...  n-1  n
 Status   ✓  ✓  ✕  ✕  ...   ✕   ✕
                ▲
-              tis
+              this
 ```
 #### Solution
 1. Initial State
@@ -471,7 +473,65 @@ Try every combination of all items, then choose one combination with maximum pro
 > 2. Geometic Sequence: A geometric sequence has a **constant ratio** between each consecutive pair of terms.
 2. Optimized  
     After optimization, Memorization (top-down) or DP-Tabulation (bottom-up) has a space & time complexity of $O(N\times C)$, where $N$ represent total items and $C$ is the maximum capacity. 
+### Example.3 Coin Change
+> Leetcode: [322. Coin Change](https://leetcode.com/problems/coin-change/)  
 
+Given an integer array `coins` representing coins of different denominations and an integer `amount` representing target amount of money. Return the **minimum** number of coins needed to make up that amount. If the total amount can not be made up by any combination of coins, return -1. Each coin can be used infinite times.  
+Example:  
+```
+coins = [1,2,5], amount = 11
+return 3
+explain 11 = 5 + 5 + 1
+```
+#### Solution
+1. Brute Force  
+	Recurrence Relation:  
+	$$ coins = \{c_1,\ c_2,\ ...,\ c_n\} $$
+	$$ F(a) = MIN(F(a-c_1)+1,\ F(a-c_2)+1,\ ..., F(a-c_n)+1) $$
+	> Note: F(a) represents minimum number of coins needed to make up to amount `a`.  
+
+	Recursion Tree:  
+	```
+	                ┌───┐
+	amount          │ 11│
+	                └───┘
+	              /   |   \
+	coin used    1    2    5
+	            /     |     \
+	         ┌───┐  ┌───┐  ┌───┐
+	remain   │ 10│  │ 9 │  │ 6 │
+	         └───┘  └───┘  └───┘
+	         / | \
+	        1  2  5       ...
+	       /   |   \
+	   ┌───┐ ┌───┐ ┌───┐
+	   │ 9 │ │ 8 │ │ 5 │
+	   └───┘ └───┘ └───┘
+	    ...
+	```
+	For each remaining amount, use coins of different denominations, until the remaining amount is 0. The minimum **depth** of all leaves with value 0 is solution. To get every possible combination, recursion was executed in DFS manner. As F(9) was solved multiple times, overlapping subproblems exist in this problem.
+2. Optimize with Memorization  
+	Store calculated value in 1D array DP.
+3. Bottom Up Dynamic Programming  
+	Fill the 1-D DP array from bottom up, according to the recurrence relation.
+	```
+	coins {1,4,5}
+
+	index 0 1 2 3 4 5 6 7 8 9
+	     ┌─┬─┬─┬─┬─┬─┬─┬─┬─┬─┐
+	 DP  │0│ │ │ │ │ │ │ │ │ │
+	     └─┴─┴─┴─┴─┴─┴─┴─┴─┴─┘
+	```
+	```python
+	MAX = float('inf')
+    DP = [0] + [MAX]*amount
+    for a in range(1, amount+1):
+        DP[a] = min([DP[a-c]+1 if a-c>=0 else MAX for c in coins])
+	return -1 if DP[amount]==MAX else DP[amount]
+	```
+	> Note: Trick  
+	> We can set `MAX = amount + 1`.
+### Example.4 Longest Common Substring
 ### Conclusion
 start from brute force (**recursive**, decision tree), then optimize top down with memorization, then come up with bottom up dynamic programming technique.
 ## Sort
