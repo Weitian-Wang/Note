@@ -545,14 +545,14 @@ text2 = "ace"
 ```  
 #### Solution
 1. Mathematical Notation  
-`text1` = $\{a_1, a_2, a_3, ..., a_m\}$  
-`text2` = $\{b_1, b_2, b_3, ..., b_n\}$  
+`text1` = $[\ a_1, a_2, a_3, ..., a_m\ ]$  
+`text2` = $[\ b_1, b_2, b_3, ..., b_n\ ]$  
 where `m` and the length of `text1` and `n` is length of `text2`.  
 	> Note: Be careful about dimensions and indices, start from 0 or 1.  
 
 2. Define 2-D DP Array  
 Define `DP[m+1][n+1]`.  
-`DP[i][j]` represents the length of LCS between $\{a_1, a_2, a_3, ..., a_i\}$ and $\{b_1, b_2, b_3, ..., b_j\}$, which is the first `i` and `j` characters of `text1` and `text2` respectively.
+`DP[i][j]` represents the length of LCS between $[\ a_1, a_2, a_3, ..., a_i\ ]$ and $[\ b_1, b_2, b_3, ..., b_j\ ]$, which is the first `i` and `j` characters of `text1` and `text2` respectively.
 	```
 	\j
 	i\   0   1   2   3            i
