@@ -1,247 +1,25 @@
-- [Algorithm](#algorithm)
-	- [Binary Search](#binary-search)
-		- [Basic Version](#basic-version)
-			- [Solution](#solution)
-			- [Execution Details](#execution-details)
-			- [Complexity](#complexity)
-		- [Variant.1 First Bad Version](#variant1-first-bad-version)
-			- [Solution](#solution-1)
-		- [Variant.2 Rotated Sorted Array I](#variant2-rotated-sorted-array-i)
-			- [Solution](#solution-2)
-		- [Variant.3 Rotated Sorted Array II](#variant3-rotated-sorted-array-ii)
-			- [Solution](#solution-3)
-	- [Dynamic Programming](#dynamic-programming)
-		- [Introduction](#introduction)
-			- [Characteristics of DP Problems](#characteristics-of-dp-problems)
-			- [DP vs. Recursion](#dp-vs-recursion)
-			- [DP vs. Devide & Conquer](#dp-vs-devide--conquer)
-		- [Example.1 Fibonacci Numbers](#example1-fibonacci-numbers)
-			- [Solution.1 Bottom-Up with Tabulation (DP)](#solution1-bottom-up-with-tabulation-dp)
-			- [Solution.2 Top-Down with Memorization (Recursion)](#solution2-top-down-with-memorization-recursion)
-		- [Example.2 0/1 Knapsack](#example2-01-knapsack)
-			- [Solution.1 Basic Brute Force](#solution1-basic-brute-force)
-			- [Solution.2 Dynamic Programming](#solution2-dynamic-programming)
-			- [Complexity](#complexity-1)
-		- [Example.3 Coin Change](#example3-coin-change)
-			- [Solution](#solution-4)
-		- [Example.4 Longest Common Subsequence](#example4-longest-common-subsequence)
-			- [Solution](#solution-5)
-		- [Conclusion](#conclusion)
-	- [Sort](#sort)
-	- [Recursion](#recursion)
-	- [Backtack](#backtack)
-	- [Slide Window](#slide-window)
-	- [Binary Search Tree](#binary-search-tree)
-	- [Graph BFS DFS](#graph-bfs-dfs)
-- [Data Structure](#data-structure)
-
-# Algorithm
-## Binary Search
-### Basic Version
-> [Leetcode: 704. Binary Search](https://leetcode.com/problems/binary-search/)
-
-Given an **sorted** (ascending) array of integer `nums` and a integer `target`, find the index of the target, or return -1 if non-existent.
-#### Solution
-1. Initial state:
-- start / left / lo = 0
-- end / right / hi = len(nums) **- 1**
-    > Note: The end index of an array is length - 1.
-2. Process:
-- mid = (start + end)//2
-  > Note:
-  > 
-  > In python3 use operator `//`, or use `/` in python2 between two integers.  
-  >
-  > Or use math library to floor devision result:  
-  > `mid = math.floor((start+end)/2)`  
-  > 
-  > This trick gets around integer overflow in C/C++:  
-  > `mid = start + (end-start)//2`  
-- Condition: compare `nums[mid]` to `target`
-   - if `target` == `nums[mid]`: found index `mid` 
-   - if `target` > `nums[mid]`: search latter half of the array
-   - if `target` < `nums[mid]`: search first half of the array
-3. Repeat: 
-    Loop until start and end converge, or found index in process.
-#### Execution Details
-1. Shrink Boundary & Exit Condition  
-- Include `mid`
-   - Loop condition: `while start+1 < end`
-        > Note: Regardless of array having even or odd number of elements, `start` and `end` will converge to **two** consecutive indexes.  
-        >  ```
-        >  Case.1 Even                          Case.2 Odd
-        >  -------------------------            ----------------------
-        >  target   6                           target   4        
-        >  index    0  1  2  3  4  5            index    0  1  2  3  4      
-        >  array   -1  0  1  2  4  6            array   -1  0  1  2  4
-        >           ▲     ▲        ▲                     ▲     ▲     ▲
-        >  it-1   start  mid      end           it-1   start  mid   end
-        >                 ▲  ▲     ▲                           ▲  ▲  ▲
-        >  it-2           s  m     e            it-2           s  m  e
-        >                    ▲  ▲  ▲                              ▲  ▲
-        >  it-3              s  m  e            it-3              s  e
-        >                       ▲  ▲                              ▲  ▲
-        >  it-4                s/m e            it-4             s/m e
-        >  ```
-        >  In cases like the 4th iteration, we'll stuck in infinite loop.
-    
-   - Shrink end: `end = mid`
-   - Shrink start: `start = mid`
-   - After loop: Check last **two** elements, `nums[start] == target` or `nums[end] == target`
-- Exclude `mid`
-    - Loop condition: `while start < end`, exit when start and end converge `start == end`
-        > Note: Because of excluding mid, `start` and `end` will converge to same value.
-    - Must check `if nums[mid] == target` before shrinking boundaries.
-    - Shrink end: `end = mid - 1`
-    - Shrink start: `start = mid + 1`
-    - After loop: Check the **last** element, `nums[start or end] == target`
-2. Recursion or While Loop  
-   Obviously, any subarray of a sorted array is also sorted. Locating `target` in first or latter half of orginal array is a subquestion, therefore we can also use recursion.
-    > Note: Subarray vs Subsqeuence vs Subset  
-    > Consider an array [1, 2, 3, 4]  
-    > Subarray: Contiguous and retains order, [2, 3, 4]  
-    > Subsequence: Only maintain relative order, [1, 3, 4]  
-    > Subset: Neither contiguous nor in relative order, [4, 1, 3]  
-    > ```
-    > ┌─────────────────────────────────┐
-    > │ Subset                          │
-    > │    ┌───────────────────────┐    │
-    > │    │ Subsequence           │    │
-    > │    │   ┌───────────────┐   │    │
-    > │    │   │               │   │    │
-    > │    │   │   Subarray    │   │    │
-    > │    │   │               │   │    │
-    > │    │   └───────────────┘   │    │
-    > │    └───────────────────────┘    │
-    > └─────────────────────────────────┘
-    > ```
-    However, while recursion is easier to understand and to implement, it's slower than iteration (at least in Java, C and Python).
-#### Complexity
-The solution eliminates half of the array at each iteration, until converge to a single element.
-$$ 2^{\text{iteration}}=n $$
-$$ \text{iteration}\ =\ \log_2 n$$
-1. Average: $O(\log n)$  
-2. Best-case: When the target is in the middle of array, $O(1)$.
-3. Worst-case: When the target is at either extremity of the array, the solution will go through all $\log_{2}{n}$ iterations.
-   > Note: $\log_{a}{b}$ is pronounced "log base `a` of `b`".
-### Variant.1 First Bad Version
-> [Leetcode: 278. First Bad Version](https://leetcode.com/problems/first-bad-version/)  
-
-Instead of sorted list, we have `n` versions `[1, 2, 3, ..., n]`, objective is to find the first bad one which all following ones are bad. 
-```
-Ver.No   1  2  3  4  ...  n-1  n
-Status   ✓  ✓  ✕  ✕  ...   ✕   ✕
-               ▲
-              this
-```
-#### Solution
-1. Initial State
- - start =  1 
- - end = n
-2. Process
-    > Note: An implementation of binary search, using **include mid** method. 
-
- - Loop condition: start + 1 < end
- - `mid` = `(start+end)//2`
- - Condition:
-   - if `isBadVersion(mid)`: shrink end point
-   - if `not isBadVersion(mid)`: shrink start point
-3. Repeat:  
-Until start and converge to two contiguous versions.
-- Scenario 1: `if isBadVersion(start)`, in this case 1st version is bad.
-- Scenario 2: `else`, `end` is the 1st bad version, with its previous version good. 
-### Variant.2 Rotated Sorted Array I
-> [Leetcode: 33. Search in Rotated Sorted Array](https://leetcode.com/problems/search-in-rotated-sorted-array/)
-
-Given an ascending integer array `nums` with **distinct** values, rotated at random point (doesn't matter where). E.g. `[0, 1, 2, 4, 5, 6, 7]` after rotation became `[4, 5, 6, 7, 0, 1 ,2]`. Find index of integer `targe` if its in `nums`, or -1 if it is not in the array.
-
-#### Solution
-1. Prerequisite:  
-- The rotated sorted array is partially sorted.
-    ```
-    4  5  6  7  0  1  2
-    ----------  -------
-       left      right
-    ```
-- The subarray of rotated sorted array is also rotated sorted.
-    ```
-    6  7  0  1  2
-    ----  -------
-    left   right
-    ```
-2. Is start-mid part sorted? Or is mid-end part sorted?
-    > Note: Compare `nums[mid]` to `nums[end]`, where `nums[end]` is the last element of the smaller subarray.
-    > 
-    > ```
-    > index 0  1  2  3  4  5  6             index 0  1  2  3  4  5  6
-    > nums  4  5  6  7  0  1  2             nums  6  7  0  1  2  3  4
-    >       ----------  -------                   ----  -------------
-    >          left      right                    left       right
-    >       ▲        ▲        ▲                   ▲        ▲        ▲
-    >       │        │        │                   │        │        │
-    >     start     mid      end                start     mid      end
-    > ```
-3. Is target in sorted subarray?  
-    - target in sorted subarray: regular binary search  
-    - target not in sorted part: subquestion of original question
-        > Subarray of a rotated sorted array is also rotated sorted.
-4. Full logic (Decision Tree)
-    ```
-                               ┌─────────┐
-                               │ target  │
-                            ┌─►│ in      ├───► binary search - shrink end
-               ┌─────────┐  │  │ left    │
-               │ left    │  │  └─────────┘
-            ┌─►│ part    ├──┤
-            │  │ sorted  │  │  ┌─────────┐
-            │  └─────────┘  │  │ target  │    
-            │               └─►│ not in  ├───► subquestion - shrink start
-            │                  │ left    │   
-            │                  └─────────┘
-    begin───┤
-            │                  ┌─────────┐
-            │                  │ target  │    
-            │               ┌─►│ in      ├───► binary search - shrink start
-            │  ┌─────────┐  │  │ right   │
-            │  │ right   │  │  └─────────┘
-            └─►│ part    ├──┤
-               │ sorted  │  │  ┌─────────┐
-               └─────────┘  │  │ target  │    
-                            └─►│ not in  ├───► subquestion - shrink end
-                               │ right   │
-                               └─────────┘
-    ``` 
-
-### Variant.3 Rotated Sorted Array II
-> [Leetcode: 81. Search in Rotated Sorted Array II](https://leetcode.com/problems/search-in-rotated-sorted-array-ii/)
-
-Based on question [Variant.2](#variant2-rotated-sorted-array-i), but the elements can be the same (**not** necessarily **distinct**).
-```
-  index    0  1  2  3  4  5
-  array   -1  0  0  1  2  2
-```
-#### Solution
-Same method can be used when tackling this problem, but with one exceptional case, which was shown as following diagram.
-```
-index    0  1  2  3  4  5                 index    0  1  2  3  4  5
-array    1  1  1  2  1  1                 array    1  2  1  1  1  1
-         ----------  ----                          ----  ----------
-            left     right                         left     right
-         ▲     ▲        ▲                          ▲     ▲        ▲
-         │     │        │                          │     │        │
-       start  mid      end                       start  mid      end
-```
-Which part (start-mid or mid-end part) is sorted is no longer be determined by the relationship between `nums[mid]` and `nums[end]`. This problem is solely caused by **intial** and **trailing** duplicated elements. Skip them before [this](#solution-2) process.
-```python
-start = 0
-end = len(nums) - 1
-while start < end and nums[start] == nums[start+1]:
-    start += 1
-while start < end and nums[end] == nums[end-1]:
-    end -= 1
-```
-
 ## Dynamic Programming
+- [Dynamic Programming](#dynamic-programming)
+  - [Introduction](#introduction)
+    - [Characteristics of DP Problems](#characteristics-of-dp-problems)
+    - [DP vs. Recursion](#dp-vs-recursion)
+    - [DP vs. Devide & Conquer](#dp-vs-devide--conquer)
+  - [Example.1 Fibonacci Numbers](#example1-fibonacci-numbers)
+    - [Solution.1 Bottom-Up with Tabulation (DP)](#solution1-bottom-up-with-tabulation-dp)
+    - [Solution.2 Top-Down with Memorization (Recursion)](#solution2-top-down-with-memorization-recursion)
+  - [Example.2 0/1 Knapsack](#example2-01-knapsack)
+    - [Solution.1 Basic Brute Force](#solution1-basic-brute-force)
+    - [Solution.2 Dynamic Programming](#solution2-dynamic-programming)
+    - [Complexity](#complexity)
+  - [Example.3 Coin Change](#example3-coin-change)
+    - [Solution](#solution)
+  - [Example.4 Longest Common Subsequence](#example4-longest-common-subsequence)
+    - [Solution](#solution-1)
+  - [Example.5 Best Time to Buy and Sell Stock with Cooldown](#example5-best-time-to-buy-and-sell-stock-with-cooldown)
+    - [Solution.1 Top-Down Recursion](#solution1-top-down-recursion)
+    - [Solution.2 Bottom-Up Dynamic Prog](#solution2-bottom-up-dynamic-prog)
+  - [Conclusion](#conclusion)
+
 ### Introduction
 Dynamic Programming (DP) is a algorithmic technique for solving an optimization problem, where we break down the original problem into smaller subproblems.
 > Note:  
@@ -255,10 +33,8 @@ To solve the original problem, the same subproblem is solved multiple times.
 Overall optimal solution can be constructed from the solutions of its subproblems. 
 #### DP vs. Recursion
 #### DP vs. Devide & Conquer
-
 ### Example.1 Fibonacci Numbers
 > [Leetcode: 509. Fibonacci Number](https://leetcode.com/problems/fibonacci-number/)
-
 The Fibonacci numbers, denoted as F(n) form a Fibonacci sequence. Any number in the sequence is the sum of two preceeding ones `F(n)=F(n-1)+F(n-2)`, starting from `F(0)=0` and `F(1)=1`. Given `n`, calculate `F(n)`.
 ```
 F(4)  =  F(3)    +    F(2)
@@ -283,13 +59,12 @@ Start from smallest subproblems, F(0) and F(1).
 2. Process  
     Calculate number at next position, store results of subproblems in DP array.
     ```python
-    # index 0 to n
-	# !IMPORTANT!
-    # range(start, end) -> [start, end) -> s, s+1, ..., e-2, e-1
-    # range(end) -> [0, end) -> 0, 1, ..., end-1
     for i in range(2, n+1):
         dp[i] = dp[i-1] + dp[i-2]
     ```
+    > Note: Builtin `range` Function in Python  
+    > `range(start, end)` -> [start, end) -> s, s+1, ..., e-2, e-1  
+    > `range(end)` -> [0, end) -> 0, 1, ..., end-1  
 3. Repeat  
     Repeat until reach n-th Fiboncci number.  
 4. Comlexity and optimization  
@@ -327,7 +102,6 @@ Start from smallest subproblems, F(0) and F(1).
     We can store solved subproblem (memorization) and skip nodes on recursion tree.
     ```
         Optimized Recursion Tree
-
                      fib(4)
                    /        \
                fib(3)      fib(2)
@@ -345,7 +119,6 @@ Example:
 Items      A   B   C   D
 Weights  { 2   3   1   4 }
 Profits  { 4   5   3   7 }
-
 Capacity   5 (weight units)
 ```
 The most profitable combination would be item C + D, with a total weight of 5, which generates 10 profit.  
@@ -404,7 +177,6 @@ Try every combination of all items, then choose one combination with maximum pro
 1. Idea  
     Define 2-D array `dp[N][C+1]`, as used in optimized [solution.1](#solution1-basic-brute-force). `dp[i][c]` will represent the maximum knapsack profit for capacity `c` calculated from the **first `i` items** (item 0 to i).  
     > Note: The key is to understand the meaning of `dp[i][c]`, and the relation with previous elements.  
-
     For each `i` and `c`, we choose the maximum from two options:  
     1. Exclude current item, use previous profit: `dp[i-1][c]`
     2. Include current item, plus previous profits with current weight subtracted: `profits[i] + dp[i-1][c-weights[i]]`  
@@ -464,12 +236,10 @@ Try every combination of all items, then choose one combination with maximum pro
     > Note:
     > Decision tree is a **perfect binary tree** of depth `n`.  
     > Number of nodes is $S_n\ =\ \frac{a_1(1-r^n)}{1-r} = 2^{n+1}-1$   
-
 > Note: Types of Binary Tree  
 > 1. Full Binary Tree: Every node have 0 or 2 children.
 > 2. Complete Binary Tree: All levels have complete nodes, except for last level. Nodes on the last level are as left side as possible.
 > 3. Perfect Binary Tree: All nodes except leaf nodes have two children and leaf nodes are at same depth.  
-
 > Note: Common Types of Sequence
 > 1. Arithmetic Sequence: An arithmetic sequence has a **constant difference** between each consecutive pair of terms.
 > 2. Geometic Sequence: A geometric sequence has a **constant ratio** between each consecutive pair of terms.
@@ -477,7 +247,6 @@ Try every combination of all items, then choose one combination with maximum pro
     After optimization, Memorization (top-down) or DP-Tabulation (bottom-up) has a space & time complexity of $O(N\times C)$, where $N$ represent total items and $C$ is the maximum capacity. 
 ### Example.3 Coin Change
 > [Leetcode: 322. Coin Change](https://leetcode.com/problems/coin-change/)  
-
 Given an integer array `coins` representing coins of different denominations and an integer `amount` representing target amount of money. Return the **minimum** number of coins needed to make up that amount. If the total amount can not be made up by any combination of coins, return -1. Each coin can be used infinite times.  
 Example:  
 ```
@@ -491,7 +260,6 @@ explain 11 = 5 + 5 + 1
 	$$ coins = \{c_1,\ c_2,\ ...,\ c_n\} $$
 	$$ F(a) = MIN(F(a-c_1)+1,\ F(a-c_2)+1,\ ..., F(a-c_n)+1) $$
 	> Note: F(a) represents minimum number of coins needed to make up to amount `a`.  
-
 	Recursion Tree:  
 	```
 	                ┌───┐
@@ -518,7 +286,6 @@ explain 11 = 5 + 5 + 1
 	Fill the 1-D DP array from bottom up, according to the recurrence relation.
 	```
 	coins {1,4,5}
-
 	index 0 1 2 3 4 5 6 7 8 9
 	     ┌─┬─┬─┬─┬─┬─┬─┬─┬─┬─┐
 	 DP  │0│ │ │ │ │ │ │ │ │ │
@@ -535,7 +302,6 @@ explain 11 = 5 + 5 + 1
 	> We can set `MAX = amount + 1`.
 ### Example.4 Longest Common Subsequence
 > [Leetcode: 1143. Longest Common Subsequence](https://leetcode.com/problems/longest-common-subsequence/)
-
 Given two strings `text1` and `text2`, return the length of their longest common subsequence.  
 Example:  
 ```
@@ -549,7 +315,6 @@ text2 = "ace"
 `text2` = $[\ b_1, b_2, b_3, ..., b_n\ ]$  
 where `m` and the length of `text1` and `n` is length of `text2`.  
 	> Note: Be careful about dimensions and indices, start from 0 or 1.  
-
 2. Define 2-D DP Array  
 Define `DP[m+1][n+1]`.  
 `DP[i][j]` represents the length of LCS between $[\ a_1, a_2, a_3, ..., a_i\ ]$ and
@@ -594,13 +359,73 @@ Fill out DP array according to the following rule:
 	5  │ 0 │ 1 │ 2 │ 3 │          1 2 3
 	   └───┴───┴───┴───┘
 	```
+### Example.5 Best Time to Buy and Sell Stock with Cooldown
+> [Leetcode: 309. Best Time to Buy and Sell Stock with Cooldown](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/)  
+
+Given an array `prices` where `prices[i]` is the price of a given stock on the i-th day. Find the maximum profit you can achieve with restrictions:  
+* unlimited number of transactions (buy and sell this stock as many times as you like)
+* one day of cooldown after sell (can not buy next day after sell)
+* must sell before buy again (may not engage in multiple transactions)
+
+Example:
+```
+prices = [1, 2, 3, 0, 2]            prices = [3, 2, 1, 0, 2]
+action    b  s  c  b  s             action    c  c  c  b  s
+max_profit = 3                      max_profit = 2
+```
+> Note: Coding Detail  
+> To make notation of day and index of array consistant, day start from 0.
+
+#### Solution.1 Top-Down Recursion
+1. Idea: Find Recurrence Relation  
+    Let `F(i)` represent the maximum profit achievable at `i`-th day.
+    Any day can be a  
+    1. Buy day: max profit equals to last day's  
+        `F(i) = F(i-1)`
+    2. Cooldown day: max profit equals to last day's  
+        `F(i) = F(i-1)`
+    3. Sell day: `j` denotes the corresponding buy date of sell day `i`  
+        The max profit from sell day `i` is the composed of two parts:  
+        * Profit from this sell  
+        `profits[i] - profits[j]`
+
+        * Profit from previous sells   
+        `F(j-2)`  
+            > Explanation:  
+            > As `j` is an buy day, `j-1` must be a cooldown day, which can not generate profit. Skip `j-1` directly to `j-2` to ensure not profit was made in `j-1`th day.
+
+        Therefore the maximum sell day profit:  
+        `F(i) = profits[i] - profits[j] + F(j-2)` for each `j` before `i`
+
+    The final profit is the maximum of the listed three parts: 
+    $$F(i)\ =\ max(F(i_{buy}),\ F(i_{cooldown}),\ F(i_{sell}))$$  
+
+2. Implement with Code
+    ```python
+    def maxProfitRecur(profits, index):
+        # no profit before the first day
+        if index<=0:
+            return 0
+        else:
+            return max(maxProfitRecur(profits, index-1), max([maxProfitRecur(profits, j-2)+profits[index]-profits[j] for j in range(index)]))
+    ```
+#### Solution.2 Bottom-Up Dynamic Programming
+Now that we've understanded the recurrence relation, we can optimize the solution with DP. 
+1. Define DP Array  
+`dp[i]` represents the maximum possible profit at `i`-th day.
+2. Initial State
+On the `0`th day, no complete transaction can be made, `dp[0] == 0`.  
+3. Fill Out DP Array  
+To help understand this process, take a look at the iteration where `i == 2`, and **potential** buy day `j == 0`.   
+    ```
+    prices = [1, 2, 3, 0, 2] 
+    profit = [0, 1, 0, 0, 0]  <- DP Array
+              ▲     ▲
+              j     i
+    ```
+    `j-2` is smaller than `0`, which means no previous transactions has been completed, thus `dp[j-2] = 0`.  
+
+### 
 ### Conclusion
 start from brute force (**recursive**, decision tree), then optimize top down with memorization, then come up with bottom up dynamic programming technique.  
 
-## Sort
-## Recursion
-## Backtack
-## Slide Window
-## Binary Search Tree
-## Graph BFS DFS
-# Data Structure
