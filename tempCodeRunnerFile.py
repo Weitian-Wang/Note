@@ -1,1 +1,1 @@
-s[i:i+2]
+new_head, next_head = self.reverse_k(node.next, count+1, k)
