@@ -169,12 +169,104 @@
 <li><a href="#why-5-stage-ideally-balanced-pipeline">Why 5-Stage? Ideally Balanced Pipeline</a></li>
 </ul>
 </li>
-<li><a href="#pipeline-hazard">Pipeline Hazard</a></li>
-<li><a href="#branch-prediction">Branch Prediction</a></li>
-<li><a href="#superscale">Superscale</a></li>
 </ul>
 </li>
-<li><a href="#memory-system-and-cache">Memory System and Cache</a></li>
+<li><a href="#pipeline-hazard">Pipeline Hazard</a>
+<ul>
+<li><a href="#read-after-write-data-hazard">Read-After-Write Data Hazard</a>
+<ul>
+<li><a href="#example-1">Example 1</a></li>
+<li><a href="#example-2">Example 2</a></li>
+</ul>
+</li>
+<li><a href="#load-use-data-hazard">Load-Use Data Hazard</a>
+<ul>
+<li><a href="#example">Example</a></li>
+</ul>
+</li>
+<li><a href="#control-hazard">Control Hazard</a>
+<ul>
+<li><a href="#example-1">Example</a></li>
+</ul>
+</li>
+<li><a href="#other-situations-and-hazards">Other Situations and Hazards</a></li>
+<li><a href="#solution-1">Solution</a>
+<ul>
+<li><a href="#stall">Stall</a></li>
+<li><a href="#forward">Forward</a></li>
+<li><a href="#non-architecture-solution">Non-architecture Solution</a></li>
+<li><a href="#branch-delay-slot">Branch Delay Slot</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#branch-prediction">Branch Prediction</a>
+<ul>
+<li><a href="#branch-predictor">Branch Predictor</a>
+<ul>
+<li><a href="#static-branch-prediction">Static Branch Prediction</a></li>
+<li><a href="#dynamic-branch-prediction">Dynamic Branch Prediction</a></li>
+</ul>
+</li>
+<li><a href="#handle-mis-prediction">Handle Mis-prediction</a>
+<ul>
+<li><a href="#example-handle-method---epoch-based">Example Handle Method - Epoch Based</a></li>
+</ul>
+</li>
+<li><a href="#example-1-bit-predictor">Example 1-bit Predictor</a></li>
+<li><a href="#example-2-bit-predictor">Example 2-bit Predictor</a></li>
+<li><a href="#other-improvements">Other Improvements</a>
+<ul>
+<li><a href="#branchless-programming">Branchless Programming</a></li>
+<li><a href="#compiler-loop-unrolling">Compiler Loop Unrolling</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#superscale">Superscale</a></li>
+<li><a href="#memory-system-and-cache">Memory System and Cache</a>
+<ul>
+<li><a href="#motivation-1">Motivation</a></li>
+<li><a href="#sram--dram">SRAM &amp; DRAM</a>
+<ul>
+<li><a href="#sram">SRAM</a></li>
+<li><a href="#dram">DRAM</a></li>
+</ul>
+</li>
+<li><a href="#cache">Cache</a>
+<ul>
+<li><a href="#multi-layer-cache-architecture">Multi-Layer Cache Architecture</a></li>
+</ul>
+</li>
+<li><a href="#cache-operation">Cache Operation</a>
+<ul>
+<li><a href="#basic-unit-of-cache-operation">Basic Unit of Cache Operation</a></li>
+<li><a href="#fetch-data-to-cache">Fetch Data to Cache</a></li>
+<li><a href="#access-data">Access Data</a></li>
+</ul>
+</li>
+<li><a href="#cache-miss">Cache Miss</a>
+<ul>
+<li><a href="#compulsory-misses">Compulsory Misses</a></li>
+<li><a href="#capacity-misses">Capacity Misses</a></li>
+<li><a href="#conflic-misses">Conflic Misses</a></li>
+</ul>
+</li>
+<li><a href="#cache-schemes">Cache Schemes</a>
+<ul>
+<li><a href="#direct-mapped-cache">Direct Mapped Cache</a>
+<ul>
+<li><a href="#why-use-lower-bits">Why use lower bits?</a></li>
+<li><a href="#how-do-we-know-block-in-cache">How do we know block in cache?</a></li>
+<li><a href="#how-to-load-a-multi-byte-block">How to load a multi-byte block?</a></li>
+</ul>
+</li>
+<li><a href="#fully-associative">Fully Associative</a></li>
+<li><a href="#n-way-set-associative">N-way Set Associative</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -362,7 +454,7 @@ Hardware Representation    000101011 &lt;-ISA-&gt; Hardware
 <h4 id="contamination-delay-of-combinational-circuits">Contamination Delay of Combinational Circuits</h4>
 <p>Determined by shortest path in a circuit.</p>
 <h3 id="sequential-circuit">Sequential Circuit</h3>
-<p>Rater trivial.</p>
+<p>Rather trivial.</p>
 <h2 id="pipeline">Pipeline</h2>
 <h3 id="improve-combinational-circuit">Improve Combinational Circuit</h3>
 <h4 id="problem-with-combinational-circuit-without-pipeline">Problem With Combinational Circuit Without Pipeline</h4>
@@ -389,7 +481,7 @@ Inputs and outputs of each gate component have to be held until the final output
 </ol>
 <blockquote>
 <h4 id="understand-the-advantage-of-pipeline">Understand the Advantage of Pipeline</h4>
-<p>The clock period only needs to over the propagation delay between two registers from two adjacent stages, instead of the entire critical path. Therefore, we can shorten the clock period (higher clock rate), which increases throughput at cost of latency (not by much).</p>
+<p>The clock period only needs to cover the propagation delay between two registers from two adjacent stages, instead of the entire critical path. Therefore, we can shorten the clock period (higher clock rate), which increases throughput at cost of latency (not by much).</p>
 </blockquote>
 <blockquote>
 <p><a href="https://www.ics.uci.edu/~swjun/courses/2022F-CS250P/materials/lec5%20-%20The%20processor.pdf">Pipelining Methodology Page 10</a><br>
@@ -456,6 +548,9 @@ Request: Pipe this circuit to maximize throught put and minimize latency.</p>
 <li>Memory Access - Request memory read or write</li>
 <li>Write Back - Write execution result or memeory access result back to register</li>
 </ol>
+<blockquote>
+<p>Assuming every stage takes a single clock cycle for simplicity's sake.</p>
+</blockquote>
 <h4 id="3-stage-pipeline-analysis">3-Stage Pipeline Analysis</h4>
 <p>Memeory is not part of combinational circuit, memory accesses should be separate stages. 3-Stage is the most basic staging.</p>
 <ol>
@@ -467,7 +562,6 @@ Request: Pipe this circuit to maximize throught put and minimize latency.</p>
 <pre><code><code><div>          ┌───┐----┌───────┬───┐----┐
 instr. 1  │ F │    │  Exe  │ W │    |
           └───┘----└───────┴───┘----┘
-
                    ┌───┐----┌───────┬───┐----┐
 instr. 2           │ F │    │  Exe  │ W │    |
                    └───┘----└───────┴───┘----┘
@@ -476,20 +570,320 @@ instr. 2           │ F │    │  Exe  │ W │    |
 <pre><code><code><div>           ┌─────┬─────┬─────┬─────┬─────┐
 instr. 1   │ Fet │ Dcd │ Exe │ Mem │ Wrt │
            └─────┴─────┴─────┴─────┴─────┘
-
                  ┌─────┬─────┬─────┬─────┬─────┐
 instr. 2         │ Fet │ Dcd │ Exe │ Mem │ Wrt │
                  └─────┴─────┴─────┴─────┴─────┘
-
                        ┌─────┬─────┬─────┬─────┬─────┐
 instr. 3               │ Fet │ Dcd │ Exe │ Mem │ Wrt │
                        └─────┴─────┴─────┴─────┴─────┘
 </div></code></code></pre>
 <p>Every stage have similar propagation delay and CPU is kept busy at each clock period.</p>
-<h3 id="pipeline-hazard">Pipeline Hazard</h3>
-<h3 id="branch-prediction">Branch Prediction</h3>
-<h3 id="superscale">Superscale</h3>
+<h2 id="pipeline-hazard">Pipeline Hazard</h2>
+<h3 id="read-after-write-data-hazard">Read-After-Write Data Hazard</h3>
+<p>When the following instruction depends on register yet to be updated by previous instruction.</p>
+<p>Register can be read in:</p>
+<ol>
+<li>Decode Stage</li>
+</ol>
+<p>Register can be written in:</p>
+<ol>
+<li>Execution Stage - Calculation result directly stored to register</li>
+<li>Write Back Stage - Result write back to register</li>
+</ol>
+<h4 id="example-1">Example 1</h4>
+<pre><code><code><div>instruction 1: add s0, s1, s2   &lt;- write to s0 at write back stage
+instruction 2: add s4, s0, s3   &lt;- read s0 at decode stage
+</div></code></code></pre>
+<blockquote>
+<p>add vs addi:<br>
+add - two registers and stores the result in a register<br>
+addi - add the register to an immediate value, store result in register</p>
+</blockquote>
+<p>Instruction 2 reads 4 cycle to early.</p>
+<pre><code><code><div>           ┌──────┐
+cycle 1    │ Fet1 │
+           └──────┘
+           ┌──────┬──────┐
+cycle 2    │ Fet2 │ Dcd1 │
+           └──────┴──────┘
+                  ┌──────┬──────┐
+cycle 3           │ Dcd2 │ Exe1 │
+                  └──────┴──────┘
+   .                 ▲
+   .                 │
+   .               read
+                    r0                 ┌──────┐
+cycle 5                                │ Wrt1 │
+                                       └──────┘
+                                          ▲
+                                          │
+                                        write
+                                         r0
+</div></code></code></pre>
+<p>r0 is correct at cycle 4, the cycle after instruction 1 execution stage.</p>
+<h4 id="example-2">Example 2</h4>
+<pre><code><code><div>instruction 1: addi s0, zero, 1   &lt;- write to s0 at write back stage
+instruction 2: addi s1, s0, 0   &lt;- read s0 at decode stage
+</div></code></code></pre>
+<p>Instruction 2 reads 4 cycle to early.</p>
+<pre><code><code><div>           ┌──────┐
+cycle 1    │ Fet1 │
+           └──────┘
+           ┌──────┬──────┐
+cycle 2    │ Fet2 │ Dcd1 │
+           └──────┴──────┘
+                  ┌──────┬──────┐
+cycle 3           │ Dcd2 │ Exe1 │
+                  └──────┴──────┘
+   .                 ▲
+   .                 │
+   .               read
+                    r0                 ┌──────┐
+cycle 5                                │ Wrt1 │
+                                       └──────┘
+                                          ▲
+                                          │
+                                        write
+                                         r0
+</div></code></code></pre>
+<p>r0 is correct in cycle 6, the cycle after instruction 1 write back stage.</p>
+<h3 id="load-use-data-hazard">Load-Use Data Hazard</h3>
+<p>Data loaded by a <strong>load instruction</strong> yet available by the following instruction. Only solution is to stall.</p>
+<h4 id="example">Example</h4>
+<pre><code><code><div>instruction 1: lw s0, o(s2)     &lt;- load word to s0, write back stage
+instruction 2: addi s1, s0, 1   &lt;- use data from s0, decode stage
+</div></code></code></pre>
+<p>Similar to <a href="#example-2">RAW hazard example 2</a>.</p>
+<pre><code><code><div>           ┌──────┐
+cycle 1    │ Fet1 │
+           └──────┘
+           ┌──────┬──────┐
+cycle 2    │ Fet2 │ Dcd1 │
+           └──────┴──────┘
+                  ┌──────┬──────┐
+cycle 3           │ Dcd2 │ Exe1 │
+                  └──────┴──────┘
+   .                 ▲
+   .                 │
+   .               read
+                    r0                 ┌──────┐
+cycle 5                                │ Wrt1 │
+                                       └──────┘
+                                          ▲
+                                          │
+                                        load
+                                         r0
+</div></code></code></pre>
+<h3 id="control-hazard">Control Hazard</h3>
+<p>Which instruction to fetch next depends on the previous execution result. Incorrect <strong>branch prediction</strong>.</p>
+<h4 id="example-1">Example</h4>
+<pre><code><code><div>instruction 1: beq s0, zero, elsewhere  &lt;- get next inst addr, execution stage
+instruction 2: addi s1, s0, 1           &lt;- next instruction if no branch
+</div></code></code></pre>
+<pre><code><code><div>           ┌──────┐
+cycle 1    │ Fet1 │
+           └──────┘
+           ┌──────┬──────┐
+cycle 2    │ Fet2 │ Dcd1 │
+           └──────┴──────┘
+              ▲
+              │
+      which instruction? 
+</div></code></code></pre>
+<blockquote>
+<p>BEQ Instruction:<br>
+Jump to elsewhere if s0 == zero, else execute next instruction in line.</p>
+</blockquote>
+<h3 id="other-situations-and-hazards">Other Situations and Hazards</h3>
+<ol>
+<li>RAW - Hazard</li>
+<li>WAW - No Hazard</li>
+<li>WAR - No Hazard</li>
+<li>RAR - No Hazard</li>
+</ol>
+<h3 id="solution-1">Solution</h3>
+<h4 id="stall">Stall</h4>
+<p>Stall the next instruction until the depended data is updated. Stalling will result in some components at stalled cycles not doing anything, <strong>Pipeline Bubbles</strong>.</p>
+<h4 id="forward">Forward</h4>
+<p>Forward <strong>execution stage</strong> result (of previous instruction) to the <em>corresponding stages</em> (of following instrucion). Also known as bypassing.</p>
+<blockquote>
+<p>Corresponding Stage of Each Hazard:</p>
+<ol>
+<li>RAW: forward to decode stage</li>
+<li>Control: forward to fetch stage</li>
+<li>Load-Use: result materialized only after write back stage, forwarding won't work</li>
+</ol>
+</blockquote>
+<p>Forwarding may still cause stalling in <em>deeper pipeline</em>, if the execution stage takes multiple cycles.</p>
+<blockquote>
+<p>Deeper Pipeline:<br>
+Pipeline scheme with more stages</p>
+</blockquote>
+<h4 id="non-architecture-solution">Non-architecture Solution</h4>
+<p>Code scheduling done with <strong>best effort</strong> by compiler. Reorder the register to avoid hazards.</p>
+<h4 id="branch-delay-slot">Branch Delay Slot</h4>
+<p>Try fetch another useful instruction in the next cycle following a branch instruction. Not working great IRL.</p>
+<h2 id="branch-prediction">Branch Prediction</h2>
+<p>Brach prediction is one of the countmesures of control hazard.</p>
+<h3 id="branch-predictor">Branch Predictor</h3>
+<h4 id="static-branch-prediction">Static Branch Prediction</h4>
+<p>Make fixed predicition.<br>
+Example:</p>
+<ol>
+<li>Take backward branch</li>
+<li>Not take forward branch</li>
+</ol>
+<h4 id="dynamic-branch-prediction">Dynamic Branch Prediction</h4>
+<p>Predict future branch at run-time based on prediction history.</p>
+<h3 id="handle-mis-prediction">Handle Mis-prediction</h3>
+<p>Nullify all mis-predicted previous stages.</p>
+<h4 id="example-handle-method---epoch-based">Example Handle Method - Epoch Based</h4>
+<ol>
+<li>All fetched instruction belong to ane <strong>Epoch</strong> number</li>
+<li>Instruction retains epoch number throught the pipeline</li>
+<li>In case of mispredictions, increase global epoch number by one</li>
+<li>Ignore all instruction with older epoch number arrived at execution stage</li>
+</ol>
+<h3 id="example-1-bit-predictor">Example 1-bit Predictor</h3>
+<p>1-bit brach history table.</p>
+<pre><code><code><div>0 not taken
+1 taken
+</div></code></code></pre>
+<pre><code><code><div>              T
+           ┌───┐
+       T   │   │
+   ┌─┬───►┌┴┐  │
+┌─►│0│    │1│◄─┘
+│  └┬┘◄───┴─┘
+│   │   NT
+└───┘
+ NT
+</div></code></code></pre>
+<h3 id="example-2-bit-predictor">Example 2-bit Predictor</h3>
+<p>2-bit branch history table.</p>
+<pre><code><code><div>00 strongly not taken
+01 weakly not taken
+10 weakly taken
+11 strongly taken
+</div></code></code></pre>
+<pre><code><code><div>                           T
+                          ┌───┐
+       T      T      T    │   │
+   ┌──┬──►┌──┬──►┌──┬──►┌─┴┐  │
+┌─►│00│   │01│   │10│   │11│◄─┘
+│  └┬─┘◄──┴──┘◄──┴──┘◄──┴──┘
+│   │   NT     NT     NT
+└───┘
+ NT
+</div></code></code></pre>
+<p>Question type: given an sequence of Ts, Ns, and initial predictor value, find the mispredictions.</p>
+<h3 id="other-improvements">Other Improvements</h3>
+<h4 id="branchless-programming">Branchless Programming</h4>
+<h4 id="compiler-loop-unrolling">Compiler Loop Unrolling</h4>
+<h2 id="superscale">Superscale</h2>
+<p>Idealy pipelined processor can handle one instruction per cycle. 1 IPC, 1 CPI.<br>
+Superscaler's goal is to process multiple instructions per cycle, which requires multiple pipeline hardware instances. N-way superscaler processor handles N instructions per cycle. N IPC, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mn>1</mn><mtext>N</mtext></mfrac></mrow><annotation encoding="application/x-tex">\frac{1}{\text{N}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1901em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8451em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">N</span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span> CPI.</p>
+<blockquote>
+<p>Ideal is nice, but in reality the design is complicated and performs badly due to hazards.</p>
+</blockquote>
 <h2 id="memory-system-and-cache">Memory System and Cache</h2>
+<h3 id="motivation-1">Motivation</h3>
+<p>CPU fast Memory slow.</p>
+<h3 id="sram--dram">SRAM &amp; DRAM</h3>
+<h4 id="sram">SRAM</h4>
+<p>Static Random Access Memory. Used for register files and caches.</p>
+<ol>
+<li>Expensive</li>
+<li>Fast</li>
+<li>Transistor</li>
+</ol>
+<blockquote>
+<p>Large SRAM subjects to propagation delay, which not only drives up cost but also slows down the speed.</p>
+</blockquote>
+<h4 id="dram">DRAM</h4>
+<p>Dynamic Random Access Memory. Used for main memory.</p>
+<ol>
+<li>Cheap</li>
+<li>Slow</li>
+<li>Capacitor, needs refreshing</li>
+</ol>
+<blockquote>
+<p>Can afford to make large DRAM.</p>
+</blockquote>
+<h3 id="cache">Cache</h3>
+<p>Cache hierarchy sets between processor and main memory. It abstracts the memory as single countinuous address space and speeds up data operations.</p>
+<h4 id="multi-layer-cache-architecture">Multi-Layer Cache Architecture</h4>
+<pre><code><code><div>Level    Size     Latency
+─────────────────────────
+L1       64KB     &lt;5  
+L2       256KB    &lt;20 
+L3       ~2MB     &lt;50 
+DRAM     ~GBs     Slow AF
+</div></code></code></pre>
+<pre><code><code><div>┌─────────────────────────────────┐
+│ ┌─────────────┐ ┌─────────────┐ │
+│ │ ┌─────────┐ │ │ ┌─────────┐ │ │
+│ │ │  Core1  │ │ │ │  Core2  │ │ │
+│ │ └─────────┘ │ │ └─────────┘ │ │
+│ │ ┌───┐ ┌───┐ │ │ ┌───┐ ┌───┐ │ │
+│ │ │L1i│ │L1d│ │ │ │L1i│ │L1d│ │ │
+│ │ └───┘ └───┘ │ │ └───┘ └───┘ │ │
+│ │ ┌─────────┐ │ │ ┌─────────┐ │ │
+│ │ │   L2    │ │ │ │   L2    │ │ │
+│ │ └─────────┘ │ │ └─────────┘ │ │
+│ └─────────────┘ └─────────────┘ │
+│   ┌─────────────────────────┐   │
+│   │           L3            │   │
+│   └─────────────────────────┘   │
+└─────────────────────────────────┘
+</div></code></code></pre>
+<h3 id="cache-operation">Cache Operation</h3>
+<h4 id="basic-unit-of-cache-operation">Basic Unit of Cache Operation</h4>
+<p>Block or Cache line, multi-word data.</p>
+<h4 id="fetch-data-to-cache">Fetch Data to Cache</h4>
+<p>Prefetch data might be used in the future to fastest level of cache.<br>
+Two phenomena we can use to our advantage:</p>
+<ul>
+<li>
+<p>Temporal Locality</p>
+<p>If a address location has been accessed recently, it's likely to be <strong>accessed again</strong> soon.<br>
+Methond: Cache recently accessed address.</p>
+</li>
+<li>
+<p>Spatial Locality</p>
+<p>If a address location has been accessed recently, its <strong>nearby locations</strong> will be accessed soon.<br>
+Method: Pre-fetch predicted future data.</p>
+</li>
+</ul>
+<h4 id="access-data">Access Data</h4>
+<p>Try find data in the highest cache level. If misses try block data from subsequent lower (and slower) level, time taken was called cache miss penalty.</p>
+<h3 id="cache-miss">Cache Miss</h3>
+<h4 id="compulsory-misses">Compulsory Misses</h4>
+<p>Initial access of a block.</p>
+<h4 id="capacity-misses">Capacity Misses</h4>
+<p>Replaced a block due to limited cache size, which is later accessed.</p>
+<h4 id="conflic-misses">Conflic Misses</h4>
+<p>Several blocks mapped to the same cache set.</p>
+<h3 id="cache-schemes">Cache Schemes</h3>
+<h4 id="direct-mapped-cache">Direct Mapped Cache</h4>
+<p>Use the lower bits of block address as cache address. Each block in main memory mapped to <strong>one</strong> location in cache.</p>
+<h5 id="why-use-lower-bits">Why use lower bits?</h5>
+<p>Allow consecutive memeory location to coexist in cache, take advantage of spacial locality.</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>Cache_Addr</mtext><mo>=</mo><mtext>Memory_Addr </mtext><mi>m</mi><mi>o</mi><mi>d</mi><mtext> Cache_Size</mtext></mrow><annotation encoding="application/x-tex">\text{Cache\_Addr} = \text{Memory\_Addr}\ mod\ \text{Cache\_Size}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0044em;vertical-align:-0.31em;"></span><span class="mord text"><span class="mord">Cache_Addr</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0044em;vertical-align:-0.31em;"></span><span class="mord text"><span class="mord">Memory_Addr</span></span><span class="mspace"> </span><span class="mord mathnormal">m</span><span class="mord mathnormal">o</span><span class="mord mathnormal">d</span><span class="mspace"> </span><span class="mord text"><span class="mord">Cache_Size</span></span></span></span></span></span></p>
+<h5 id="how-do-we-know-block-in-cache">How do we know block in cache?</h5>
+<p>Use the high-order bits as <strong>Tag</strong>, mapped to <strong>Valid Bit</strong>, indicating the presence of block.</p>
+<h5 id="how-to-load-a-multi-byte-block">How to load a multi-byte block?</h5>
+<p>If cache line size is n bytes, used the lowest n address bit as <strong>Byte Offset Bits</strong>.</p>
+<h4 id="fully-associative">Fully Associative</h4>
+<p>Any memory address can be mapped to any cache location. No conflict misses, but large management overhead.</p>
+<h4 id="n-way-set-associative">N-way Set Associative</h4>
+<p>In an effort to reduce conflict misses, design a cache system using multiply parallel Direct Map Caches.<br>
+#Row = #Set<br>
+#Column = #Way = Set Size<br>
+Each address can be mapped to any <em>way</em> of the specific <em>set</em>. Fixed row, any column.</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>Cache_Index</mtext><mo>=</mo><mtext>Memory_Addr </mtext><mi>m</mi><mi>o</mi><mi>d</mi><mtext> </mtext><mo stretchy="false">(</mo><mfrac><mtext>Cache_Size</mtext><mtext>#Ways</mtext></mfrac><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\text{Cache\_Index} = \text{Memory\_Addr}\ mod\ (\frac{\text{Cache\_Size}}{\text{\#Ways}})
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0044em;vertical-align:-0.31em;"></span><span class="mord text"><span class="mord">Cache_Index</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.2749em;vertical-align:-0.8804em;"></span><span class="mord text"><span class="mord">Memory_Addr</span></span><span class="mspace"> </span><span class="mord mathnormal">m</span><span class="mord mathnormal">o</span><span class="mord mathnormal">d</span><span class="mspace"> </span><span class="mopen">(</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3944em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord">#Ways</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.7em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord">Cache_Size</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.8804em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose">)</span></span></span></span></span></p>
 
         <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
         
