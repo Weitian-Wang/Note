@@ -581,15 +581,10 @@ instr. 3               │ Fet │ Dcd │ Exe │ Mem │ Wrt │
 <h2 id="pipeline-hazard">Pipeline Hazard</h2>
 <h3 id="read-after-write-data-hazard">Read-After-Write Data Hazard</h3>
 <p>When the following instruction depends on register yet to be updated by previous instruction.</p>
-<p>Register can be read in:</p>
-<ol>
-<li>Decode Stage</li>
-</ol>
-<p>Register can be written in:</p>
-<ol>
-<li>Execution Stage - Calculation result directly stored to register</li>
-<li>Write Back Stage - Result write back to register</li>
-</ol>
+<p>Register can be read in:<br>
+Decode Stage - Register read</p>
+<p>Register can be written in:<br>
+Write Back Stage - Result write back to register</p>
 <h4 id="example-1">Example 1</h4>
 <pre><code><code><div>instruction 1: add s0, s1, s2   &lt;- write to s0 at write back stage
 instruction 2: add s4, s0, s3   &lt;- read s0 at decode stage
@@ -599,7 +594,7 @@ instruction 2: add s4, s0, s3   &lt;- read s0 at decode stage
 add - two registers and stores the result in a register<br>
 addi - add the register to an immediate value, store result in register</p>
 </blockquote>
-<p>Instruction 2 reads 4 cycle to early.</p>
+<p>Instruction 2 reads 3 cycle to early.</p>
 <pre><code><code><div>           ┌──────┐
 cycle 1    │ Fet1 │
            └──────┘
@@ -625,7 +620,7 @@ cycle 5                                │ Wrt1 │
 <pre><code><code><div>instruction 1: addi s0, zero, 1   &lt;- write to s0 at write back stage
 instruction 2: addi s1, s0, 0   &lt;- read s0 at decode stage
 </div></code></code></pre>
-<p>Instruction 2 reads 4 cycle to early.</p>
+<p>Instruction 2 reads 3 cycle to early.</p>
 <pre><code><code><div>           ┌──────┐
 cycle 1    │ Fet1 │
            └──────┘

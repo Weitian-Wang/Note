@@ -1,4 +1,4 @@
-- [CS250P Computer System Architecture](#cs250p-computer-system-architecture)
+- [CS250P Computer System Architecture Part I](#cs250p-computer-system-architecture-part-i)
   - [Grading](#grading)
   - [Motivation](#motivation)
     - [End of Moore's Law](#end-of-moores-law)
@@ -21,7 +21,7 @@
     - [CISC - Complex Instruction Set Computer](#cisc---complex-instruction-set-computer)
   - [RISC-V](#risc-v)
   - [x86](#x86)
-  - [RISC-V Assembly & x86 Assembly](#risc-v-assembly--x86-assembly)
+  - [RISC-V Assembly \& x86 Assembly](#risc-v-assembly--x86-assembly)
   - [Digital Circuits](#digital-circuits)
     - [Why Digital Over Analog](#why-digital-over-analog)
       - [Disadvantage of Analog Computer](#disadvantage-of-analog-computer)
@@ -39,7 +39,7 @@
       - [Measurement of System Performance](#measurement-of-system-performance)
     - [Solution - Pipeline](#solution---pipeline)
       - [Definition](#definition-1)
-      - [Latency & Throughput in K-Stage Pipeline](#latency--throughput-in-k-stage-pipeline)
+      - [Latency \& Throughput in K-Stage Pipeline](#latency--throughput-in-k-stage-pipeline)
     - [Example Pipelining Question](#example-pipelining-question)
       - [Latency and Throughput without Pipelining](#latency-and-throughput-without-pipelining)
       - [Latency with 4-Stage Pipeline](#latency-with-4-stage-pipeline)
@@ -76,7 +76,7 @@
   - [Superscale](#superscale)
   - [Memory System and Cache](#memory-system-and-cache)
     - [Motivation](#motivation-1)
-    - [SRAM & DRAM](#sram--dram)
+    - [SRAM \& DRAM](#sram--dram)
       - [SRAM](#sram)
       - [DRAM](#dram)
     - [Cache](#cache)
@@ -96,8 +96,19 @@
         - [How to load a multi-byte block?](#how-to-load-a-multi-byte-block)
       - [Fully Associative](#fully-associative)
       - [N-way Set Associative](#n-way-set-associative)
+    - [Cache Replacement Policies](#cache-replacement-policies)
+      - [Idea](#idea)
+      - [LRU](#lru)
+    - [CPI of Memory Access with Cache](#cpi-of-memory-access-with-cache)
+    - [Cache Coherency](#cache-coherency)
+    - [Cache Prefetching](#cache-prefetching)
+      - [Hardware Prefetching](#hardware-prefetching)
+      - [Software Prefetching](#software-prefetching)
+    - [Cache and OOP](#cache-and-oop)
+      - [OOP Friendly](#oop-friendly)
+      - [OOP Unfriendly](#oop-unfriendly)
 
-# CS250P Computer System Architecture
+# CS250P Computer System Architecture Part I
 ## Grading
 1. Homework 50%
 2. Mid term 25%
@@ -580,7 +591,7 @@ Question type: given an sequence of Ts, Ns, and initial predictor value, find th
 ## Superscale
 Idealy pipelined processor can handle one instruction per cycle. 1 IPC, 1 CPI.  
 Superscaler's goal is to process multiple instructions per cycle, which requires multiple pipeline hardware instances. N-way superscaler processor handles N instructions per cycle. N IPC, $\frac{1}{\text{N}}$ CPI.
-> Ideal is nice, but in reality the design is complicated and performs badly due to hazards.
+> Ideal is nice, but in reality the design is complicated and performs badly if program has many hazards, or has short-distance dependencies.  
 
 
 ## Memory System and Cache
@@ -676,6 +687,35 @@ In an effort to reduce conflict misses, design a cache system using multiply par
 Each address can be mapped to any *way* of the specific *set*. Fixed row, any column.
 $$\text{Cache\_Index} = \text{Memory\_Addr}\ mod\ (\frac{\text{Cache\_Size}}{\text{\#Ways}})$$
 
+### Cache Replacement Policies
+#### Idea
+Evict the line accessed furthest in the **future**. Predict future use by looking at the past.
+#### LRU
+Least recently used. Replace the line accessed furthest in the **past**. Given the temporal locality of programs, this works pretty well.
+> Limitation of LRU:  
+> Working memory space larger than cache size, every cache access is miss.  
 
+### CPI of Memory Access with Cache
+$$CPI = \text{L1} + \text{L1 Miss Rate}*\text{L2} + \text{L2 Miss Rate}*\text{Main Memory} $$  
+> The cache access time is added to the overall time, regardless of miss or hit.
 
- 
+### Cache Coherency
+The read to each address must return the most recent value. All writes must be visible at **some point** to ensure correct read. When a core writes a **cache line**, all other instances needs to be invalidated and updated.
+> Coherency: logically correct and consistent.  
+> When to update write is defined by Cache Coherency Protocals.  
+
+### Cache Prefetching
+CPU speculatively prefetch cache lines for potential future uses. 
+#### Hardware Prefetching
+Take advantage of runtime information.
+1. Sequential Prefetch - adjacent cache lines
+2. Strided Prefetch - distant cache lines 
+#### Software Prefetching
+Take advantage of compile time information.
+
+### Cache and OOP
+Object oriented programming collects entity data in a class/structure, which are located together in the memory
+#### OOP Friendly 
+All instance variables are accessed when an instance is accessed.
+#### OOP Unfriendly
+Access small number of instance variables per instance accesse.
