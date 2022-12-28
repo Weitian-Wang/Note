@@ -41,6 +41,61 @@
           - [Small Page Size](#small-page-size)
           - [Solution](#solution)
         - [Hierarchical Page Table](#hierarchical-page-table)
+    - [Paged Virtual Memory and Multiprocessing](#paged-virtual-memory-and-multiprocessing)
+      - [Context Switching with Paged Virtual Memory](#context-switching-with-paged-virtual-memory)
+      - [Caching with Paged Virtual Memory](#caching-with-paged-virtual-memory)
+        - [Cache Based on Physical Address](#cache-based-on-physical-address)
+        - [Cache Based on Virtual Address](#cache-based-on-virtual-address)
+        - [VIVP Problem Solutions](#vivp-problem-solutions)
+          - [Naive Solution TLB Flush](#naive-solution-tlb-flush)
+          - [Address Space ID](#address-space-id)
+          - [Mixed Physical and Virtual Caching](#mixed-physical-and-virtual-caching)
+          - [Synonym Solution](#synonym-solution)
+    - [Demand Paging](#demand-paging)
+      - [Writethrough vs Writeback](#writethrough-vs-writeback)
+        - [Writethrough](#writethrough)
+        - [Writeback](#writeback)
+      - [Page Eviction Policy](#page-eviction-policy)
+      - [Handling of the Swap](#handling-of-the-swap)
+    - [Copy-on-write Optimization](#copy-on-write-optimization)
+      - [Optimization](#optimization)
+    - [On-demand Storage Access](#on-demand-storage-access)
+      - [Example 1](#example-1)
+      - [Example 2](#example-2)
+    - [Summary](#summary)
+  - [Multiprocessing](#multiprocessing)
+    - [Hardware for Parallelism](#hardware-for-parallelism)
+    - [Shared Memory Multiprocessor](#shared-memory-multiprocessor)
+      - [Uniform vs Non-uniform](#uniform-vs-non-uniform)
+    - [Problems](#problems)
+      - [Cache Coherency - The Two CPUs Example](#cache-coherency---the-two-cpus-example)
+      - [Memory Consistency - The Two Processes Example](#memory-consistency---the-two-processes-example)
+    - [Cache Coherency - Enforced](#cache-coherency---enforced)
+      - [Problem](#problem)
+      - [Backgrounds for Possible Solutions](#backgrounds-for-possible-solutions)
+        - [On-chip Interconnect](#on-chip-interconnect)
+        - [Bus Interconnect](#bus-interconnect)
+        - [Mesh Interconnect](#mesh-interconnect)
+      - [Solution](#solution-1)
+        - [Snooping Based](#snooping-based)
+        - [Directory Based](#directory-based)
+      - [Synchronization Hardware Support](#synchronization-hardware-support)
+        - [Software Solution - Algorithm](#software-solution---algorithm)
+        - [Hardware Solution - Atomic Instruction](#hardware-solution---atomic-instruction)
+    - [Memory Consistency - Defined by Architect](#memory-consistency---defined-by-architect)
+      - [Consistency Models](#consistency-models)
+        - [Sequential Consistency](#sequential-consistency)
+        - [Total Store Order](#total-store-order)
+      - [Amadhl's Law](#amadhls-law)
+  - [GPU](#gpu)
+    - [GPU Architecture](#gpu-architecture)
+      - [GPU Memory Architecture](#gpu-memory-architecture)
+    - [CUDA](#cuda)
+      - [Block](#block)
+      - [Grid](#grid)
+  - [Application Specific Accelerator](#application-specific-accelerator)
+  - [Datacenter Architecture](#datacenter-architecture)
+  - [FPGA](#fpga)
 
 
 
@@ -195,7 +250,6 @@ Such mapping scheme has associativity issues.
 1. TLB Hit - immediate address translation 
 2. TLB Miss - walk entire page table, load page into TLB for future use
 
-<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStV-09pjH7NAP1XsYLW7VAUKgARzYw25Wl4g&usqp=CAU">
 ###### Pros with TLB
 - Low miss rate result from benchmark, except for random access like graph
 - Exploits the locality, TLB target is 4KiB page size, which is larger than cache target cache lines.
@@ -218,7 +272,7 @@ Hierarchical page tables.
 ##### Hierarchical Page Table
 Most process doesn't use all the virtual memory available, which means most page table entries is not used.  
 Split page table number into L1 and L2 page number. We can reduce the size of page table  by only creating corresponding L2 page tables when L1 page table entry is accessed.   
-Downside: More memory access when TLB misses.  
+Downside: More memory access if TLB misses.  
 ```
 ┌───────────────────────────────────────────────┐
 │            Virtual Memory Address             │
@@ -232,4 +286,265 @@ Downside: More memory access when TLB misses.
 * proportion of graph not accurately represent number of bits
 ```
 
-Breakpoint: Hierarchical page tables
+### Paged Virtual Memory and Multiprocessing
+#### Context Switching with Paged Virtual Memory
+Save the start address of page table (page table base register) as part of the process context.
+#### Caching with Paged Virtual Memory
+##### Cache Based on Physical Address
+PIPT, Physically Indexed Physically Tagged Cache. If we use physical address for cache entries, we can basically reuse the old cache scheme. However this solution is slow.  
+1. Every Cache access requires address translation.
+2. If TLB misses, table walk time will overshadow cache benefits.
+```
+        vaddr:paddr paddr:data
+┌─────┐   ┌─────┐   ┌───────┐   ┌────────┐
+│ CPU ├──►│ TLB ├──►│ Cache ├──►│ Memory │
+└─────┘   └─────┘   └───────┘   └────────┘
+```
+##### Cache Based on Virtual Address
+VIVT, Virtually Indexed Virtually Tagged Cache. Fast but hard to implements.
+1. If Cache hit, immediately get data.
+2. If Cache miss, normal TLB process.  
+
+```
+          vaddr:data vaddr:paddr
+┌─────┐   ┌───────┐   ┌─────┐   ┌────────┐
+│ CPU ├──►│ Cache ├──►│ TLB ├──►│ Memory │
+└─────┘   └───────┘   └─────┘   └────────┘
+```
+Problem:  
+1. Multiple processes can have the same virtual address mapping to different physical addresses. Same virtual address, different physical address.
+2. Shared physical memory may be cached twice. Different virtual address, same physical address.
+##### VIVP Problem Solutions
+###### Naive Solution TLB Flush
+Flush the TLB after every context switching. Ensure TLB only has the translation of the virtual address of current running process. Compulsory miss after context switch which sacrifices performance.
+###### Address Space ID
+Augment the virtual address with process-specific Address Space ID(ASID), to distinguish virtual addresses of different processes. However the number of processes are now limited by ASID bits. This solution requires hardware and OS support. 
+###### Mixed Physical and Virtual Caching
+Virtually Indexed Physically Taged (VIPT Cache). Use subset bits of page offset as Cache index.  
+Lookup virtual index in TBL, loopup page offset in Cache, done in parallel. Only works when Cache index smaller than page offset.
+###### Synonym Solution
+Problem 2. Update to the physical address from one process may not appear for the other processes sharing this physical address.  
+Cache needs to ensure the same physical address is not cached twice.
+### Demand Paging
+Pages can reside in either memory or disk. Add "resident" flag and "dirty" flag in page table. Page offset can now mean offset in memory or disk.  
+DRAM now become a full associative cache to disk.  
+#### Writethrough vs Writeback
+##### Writethrough
+Write to corresponding page in disk whenever there is a write. Disk bandwidth will bottleneck perfomance of damand paging.
+##### Writeback
+Write to disk only if the on memory page is evicted. Use "dirty" flag to indicate change of page content, which needs a writeback when page is evicted.  
+#### Page Eviction Policy
+When we run out of memory, we need to evict some pages to make room for the new pages.  
+pseudo-LRU
+#### Handling of the Swap
+OS handles the scheduling of pages.
+MMU checks "resident" flag to see if page is on disk. If so raise exception(needs new hardware support) and let OS handler copy page from disk to memory.  
+### Copy-on-write Optimization
+When fork() is call on a process, make copy of entire process memory, for the new process to use. Some memory is not immediately used, some is never used.
+#### Optimization
+New process copy only the page table. Mark PTE with Read-Only for both new and old process.  
+Write attempts from both processes arise access faults, only then make new copies of page in the handler. 
+### On-demand Storage Access
+#### Example 1
+When executing a program, not all parts of the program may be used.  
+Create page table for the program, and mark most of them non-resident (not in memory).  
+When access attempts raise page faults, only then load page from storage.
+#### Example 2
+mmap() returns a pointer to the storage, where page is mapped to.  
+Mark PTE as non-resident.  
+Read/write to the pointer raises exceptions, which OS handles transparently.  
+### Summary
+The overall picture of paged virtual memory with TLB and demand paging.
+<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStV-09pjH7NAP1XsYLW7VAUKgARzYw25Wl4g&usqp=CAU">
+
+## Multiprocessing
+### Hardware for Parallelism
+1. SISD - Single Instruction Sinlge Data - Single Core Processor
+2. SIMD - Single Instruction Multiple Data - GPU, AVX
+3. MISD - Multiple Instruction Single Data - Systolic Arrays
+4. MIMD - Multiple Instruction Multiple Data - Parallel Processors
+
+### Shared Memory Multiprocessor
+Is a Symmetric MultiProcessor(SMP) architecture, the identical processors have their own caches, but caches accross all processors eventually conects to a single physical address space. 
+#### Uniform vs Non-uniform
+UMA - Uniform Memory Access: Indentical processors have equal access time to memory  
+NUMA - Non-Uniform Memory Access: Link some of all SMPs, and allow one SMP to directly access memory of other SMPs.  
+UPI - Ultra Path Interconnect - The link between symetric multiprocessors and memory/shared cache for NUMA.  
+### Problems
+#### Cache Coherency - The Two CPUs Example
+The two CPUs share the same physical address, the data of the address is cached in both $\text{CPU}_A$'s L1 and $\text{CPU}_B$'s L1.  
+When $\text{CPU}_A$ writes to that address, either with write-though or write-back from cache to memory, the data in $\text{CPU}_A$'s L1 and memory is updated.  
+However the data cached in $\text{CPU}_B$'s L1 become incorrect.
+
+#### Memory Consistency - The Two Processes Example
+Variable A, B are initially 0.  
+```
+Processor 1:          Processor 2:
+1: A = 1;             3: B = 1;
+2: print B            4: print A
+```
+Possible execution outcome:  
+- 01 if order 1234, 3412
+- 11 if order 1324, 3124, 1342, 3142
+
+Impossible outcome:  
+- 10
+- 00
+
+Memory Model defines possible outcome.
+### Cache Coherency - Enforced
+Read to **each address** **must** return the most recent value. Which requires writes from each processor must be visible at some point in correct order.
+#### Problem
+All SMP cores have their own cached copies of a shared memory location. Copies of other cores become stale when one core only writes to its own cache. We need to propagate (broadcast) the update to other cores.  
+#### Backgrounds for Possible Solutions
+##### On-chip Interconnect
+An interconnect fabric (builtin wires of the circuit) connect all cores & their private caches to shared cache levels and main memory.  
+```
+┌───────┐  ┌───────┐  ┌───────┐
+│  CPU  │  │  CPU  │  │  CPU  │
+└───┬───┘  └───┬───┘  └───┬───┘
+┌───┴───┐  ┌───┴───┐  ┌───┴───┐
+│ Cache │  │ Cache │  │ Cache │
+└───┬───┘  └───┬───┘  └───┬───┘
+┌───┴──────────┴──────────┴───┐
+│         Interconnect        │  <--- This part
+└──────────────┬──────────────┘
+┌──────────────┴──────────────┐
+│        Shared Cache         │
+└─────────────────────────────┘
+```
+##### Bus Interconnect
+Shared bundle of wires, all data transfers are broadcasted, all entities on the bus can listen to all communications.
+```
+┌───────┐  ┌───────┐  ┌───────┐
+│  CPU  │  │  CPU  │  │  CPU  │
+└───┬───┘  └───┬───┘  └───┬───┘
+┌───┴───┐  ┌───┴───┐  ┌───┴───┐
+│ Cache │  │ Cache │  │ Cache │
+└─┬─┬─┬─┘  └─┬─┬─┬─┘  └─┬─┬─┬─┘
+  │ │ │      │ │ │      │ │ │    ┌─────────────────────────────┐
+  └─┼─┼──────┴─┼─┼──────┴─┼─┼────┤                             │
+    └─┼────────┴─┼────────┴─┼────┤        Shared Cache         │
+      └──────────┴──────────┴────┤                             │
+              Bus                └─────────────────────────────┘
+```
+Pros: All communication is immediate single cycle  
+Cons: Only one entity can transmit data on but in any given cycle, use multi-master to schedule the use of bus  
+##### Mesh Interconnect
+Interconnect between CPUs, each core acts as a network switch. One cycle to adjacent nodes, multiple cycle with more than one hops.
+```
+┌───────┐   ┌───────┐   ┌───────┐
+│ CPU+  │   │ CPU+  │   │ CPU+  │
+│ Cache ├───┤ Cache ├───┤ Cache │
+└───┬───┘   └───┬───┘   └───┬───┘
+┌───┴───┐   ┌───┴───┐   ┌───┴───┐  ┌────────┐
+│ CPU+  ├───┤ CPU+  ├───┤ CPU+  ├──┤ Shared │
+│ Cache │   │ Cache │   │ Cache │  │ Cache  │
+└───────┘   └───────┘   └───────┘  └────────┘
+```
+Pros: Higher bandwidth than bus interconnect, scalability with more cores.  
+Cons: The latency is variable; Needs more silicon resources to implement.
+#### Solution
+Basic idea of cache coherency is:  
+If cache line is only read, multiple cores can have cache copies of the line.  
+If cache line is written to, only one cache at a time can have a copy.  
+##### Snooping Based
+All cores listen (snooping) to requests on shared cache/memory bus. - Cores decide if update cache or not.  
+Core must broadcast intention before writing into a cache line. Other cores invalidate their cache copies.  
+MIS:  
+MIS is one of the algorithms that can make this process efficient.  
+Mark each cache line with of of the three states:  
+1. Modified(M): Dirty line, only one copy of this line can exist across cores.  
+2. Shared(S): Unmodified read-only line. Multiple copies can exist.  
+3. Invalid(I): Cache line no longer valid.  
+
+Problem:  
+Multiple cores trying to write to the same address will cause ping pong of intention broadcasting.  
+Only one core can broadcast per cycle, low bandwidth will bottlenect the scalability.  
+##### Directory Based
+All cores consult a separated entity call "Directory" for cache access. - Directory controls access request.  
+Set a directory entity per core, which manages caches mapped to its own subset.  
+Add P bit per cache line for P processors, indicates which processor has a copy of the cache line. One additional dirty bit.
+#### Synchronization Hardware Support
+In parallel software critical sections implemented with lock are essentially for algorithm correctness. 
+```
+Thread 1                  Thread 2
+while (lock==False);      while (lock==False);
+lock = True;              lock = True;
+// critical section       // critical section
+lock = False;             lock = False;
+```
+If thread 2 checked lock before thread 1 set lock to True, both threads will enter critical section.  
+##### Software Solution - Algorithm
+Dekker's algorithm, Lamport's backery algorithm.
+##### Hardware Solution - Atomic Instruction
+Memory read/write in and single instruction. No other instructions can read/write between the atomic instruction. RISC-V needs an 'A' for atomic extention to support such instructions.
+
+### Memory Consistency - Defined by Architect
+**How** updates to **different addresses**  become visible to other processors. The two processes example.  
+#### Consistency Models
+Top: more strict, easier to write correct programs  
+Buttom: exploits more instruction-level parallelism (ILP), higher performance  
+1. Sequential Consistency
+2. Total Store Order
+3. Casual Consistency
+4. Processor Consistency
+5. Release Consistency
+6. Eventual Consistency
+
+##### Sequential Consistency
+Results in the memory are the same as sequential order between operations.  
+Effects of previous instruction is visible to every predecessing instructions in every processor.  
+Problem:  
+Write to shared memory must propagate to all other caches/cores (all the way to L1), through TLB and cache.  
+Archtects then think they can afford to sacrifice consistency for performance.
+
+##### Total Store Order
+Add a small store buffer between each core and its cache.  
+Writes from core stored in buffer, apply the writes to cache later in order. Write instructions **can not block** following instructions.   
+Reads first scan buffer then go to L1.  
+Problem:  
+Performance improved, single thread is correct by multi-thread is now trippy.  
+Solution:  
+Fence instruction, enforce all state changes before it to propagate, restores sequential consistency.  
+> Write instructions need not block the system, this means 00 and 10 now became possible (acceptable) outcomes for the [two processes example](#memory-consistency---the-two-processes-example), as instruction 3, 4 can now execute before 1, 2.  
+
+#### Amadhl's Law
+Speedup of parallelism:
+$$\frac{1}{(1-p)+\frac{p}{s}}$$
+p portion of parallelized execution time  
+s speedup of parallelized protion
+## GPU
+### GPU Architecture
+GPUs have thousands of threads running concurrently (SIMD fashion) in GHz. The single thread performance of GPUs are bad, the performance of GPUs comes from the massive parallelism.
+#### GPU Memory Architecture
+Not much on-chip memory per thread.  
+Relatively fast off-chip "Global" memory.  
+Almost no memory consistency between blocks.
+
+### CUDA
+Computer Uniform Device Architecture, run custom programs on massively parallel architecture.  
+#### Block
+Block is multi-dimensional array of threads. CUDA blocks can be 1D, 2D or, 3D.  
+Threads in the block and synchronize among themselves and access shared memory.
+#### Grid
+Grid is  multi-dimensional array of blocks. Blocks in a grid can run in parallel or sequential.
+## Application Specific Accelerator
+Chip specialization is one of the most prominent solutions to dark silicon.  
+However, it is not a long-term solution beyond Moore’s law.
+## Datacenter Architecture
+Topics:  
+- Cost of a datacenter
+- Power Supply
+- Cooling
+- Networking
+- Virtualization  
+
+## FPGA
+Field Programmable Gate Array.  
+Pros:  
+- FPGA can emulate any custom ciruit
+- Functions can be changed completely
+
+Cons:  
+- Emulated circuits are less efficient (performance, power consumption)
