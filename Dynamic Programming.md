@@ -3,7 +3,7 @@
   - [Introduction](#introduction)
     - [Characteristics of DP Problems](#characteristics-of-dp-problems)
     - [DP vs. Recursion](#dp-vs-recursion)
-    - [DP vs. Devide & Conquer](#dp-vs-devide--conquer)
+    - [DP vs. Devide \& Conquer](#dp-vs-devide--conquer)
   - [Example.1 Fibonacci Numbers](#example1-fibonacci-numbers)
     - [Solution.1 Bottom-Up with Tabulation (DP)](#solution1-bottom-up-with-tabulation-dp)
     - [Solution.2 Top-Down with Memorization (Recursion)](#solution2-top-down-with-memorization-recursion)
@@ -17,7 +17,8 @@
     - [Solution](#solution-1)
   - [Example.5 Best Time to Buy and Sell Stock with Cooldown](#example5-best-time-to-buy-and-sell-stock-with-cooldown)
     - [Solution.1 Top-Down Recursion](#solution1-top-down-recursion)
-    - [Solution.2 Bottom-Up Dynamic Prog](#solution2-bottom-up-dynamic-prog)
+    - [Solution.2 Bottom-Up Dynamic Programming](#solution2-bottom-up-dynamic-programming)
+  - [](#)
   - [Conclusion](#conclusion)
 
 ### Introduction
@@ -34,8 +35,10 @@ Overall optimal solution can be constructed from the solutions of its subproblem
 #### DP vs. Recursion
 #### DP vs. Devide & Conquer
 ### Example.1 Fibonacci Numbers
-> [Leetcode: 509. Fibonacci Number](https://leetcode.com/problems/fibonacci-number/)
+> [Leetcode: 509. Fibonacci Number](https://leetcode.com/problems/fibonacci-number/)  
+
 The Fibonacci numbers, denoted as F(n) form a Fibonacci sequence. Any number in the sequence is the sum of two preceeding ones `F(n)=F(n-1)+F(n-2)`, starting from `F(0)=0` and `F(1)=1`. Given `n`, calculate `F(n)`.
+
 ```
 F(4)  =  F(3)    +    F(2)
            ▲            ▲
@@ -247,6 +250,7 @@ Try every combination of all items, then choose one combination with maximum pro
     After optimization, Memorization (top-down) or DP-Tabulation (bottom-up) has a space & time complexity of $O(N\times C)$, where $N$ represent total items and $C$ is the maximum capacity. 
 ### Example.3 Coin Change
 > [Leetcode: 322. Coin Change](https://leetcode.com/problems/coin-change/)  
+
 Given an integer array `coins` representing coins of different denominations and an integer `amount` representing target amount of money. Return the **minimum** number of coins needed to make up that amount. If the total amount can not be made up by any combination of coins, return -1. Each coin can be used infinite times.  
 Example:  
 ```
@@ -301,8 +305,10 @@ explain 11 = 5 + 5 + 1
 	> Note: Trick  
 	> We can set `MAX = amount + 1`.
 ### Example.4 Longest Common Subsequence
-> [Leetcode: 1143. Longest Common Subsequence](https://leetcode.com/problems/longest-common-subsequence/)
+> [Leetcode: 1143. Longest Common Subsequence](https://leetcode.com/problems/longest-common-subsequence/)  
+
 Given two strings `text1` and `text2`, return the length of their longest common subsequence.  
+
 Example:  
 ```
 text1 = "abcde"
