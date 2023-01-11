@@ -10,6 +10,8 @@
     - [Solution](#solution-2)
   - [Variant.3 Rotated Sorted Array II](#variant3-rotated-sorted-array-ii)
     - [Solution](#solution-3)
+  - [Variant.4 Median of Two Sorted Array](#variant4-median-of-two-sorted-array)
+    - [Solution](#solution-4)
 ### Basic Version
 > [Leetcode: 704. Binary Search](https://leetcode.com/problems/binary-search/)
 
@@ -213,3 +215,13 @@ while start < end and nums[start] == nums[start+1]:
 while start < end and nums[end] == nums[end-1]:
     end -= 1
 ```
+
+### Variant.4 Median of Two Sorted Array
+> [Leetcode: ]()
+
+Based on question [Variant.2](#variant2-rotated-sorted-array-i), but the elements can be the same (**not** necessarily **distinct**).
+```
+  index    0  1  2  3  4  5
+  array   -1  0  0  1  2  2
+```
+#### Solution
