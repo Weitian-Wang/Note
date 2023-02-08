@@ -70,7 +70,9 @@ Given an **sorted** (ascending) array of integer `nums` and a integer `target`, 
     - Shrink end: `end = mid - 1`
     - Shrink start: `start = mid + 1`
     - After loop: Check the **last** element, `nums[start or end] == target`
-2. Recursion or While Loop  
+        > Note: Or use `while start <= end` as loop condition.
+
+1. Recursion or While Loop  
    Obviously, any subarray of a sorted array is also sorted. Locating `target` in first or latter half of orginal array is a subquestion, therefore we can also use recursion.
     > Note: Subarray vs Subsqeuence vs Subset  
     > Consider an array [1, 2, 3, 4]  
@@ -218,10 +220,4 @@ while start < end and nums[end] == nums[end-1]:
 
 ### Variant.4 Median of Two Sorted Array
 > [Leetcode: ]()
-
-Based on question [Variant.2](#variant2-rotated-sorted-array-i), but the elements can be the same (**not** necessarily **distinct**).
-```
-  index    0  1  2  3  4  5
-  array   -1  0  0  1  2  2
-```
 #### Solution
