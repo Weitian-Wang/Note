@@ -52,7 +52,7 @@ Iterate throught the input string.
 
 Design a stack that supports push, pop, top, and retrieving the minimum element in **constant time**.
 #### Solution
-Use one **data stac**k to store the value and another **auxiliary stack** to store the minimum value at current state.  
+Use one **data stack** to store the value and another **auxiliary stack** to store the minimum value at current state.  
 - Top: return stack value located at data stack top
 - Pop: pop from both stack
 - Min: value stored at auxiliary stack top
