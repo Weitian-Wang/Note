@@ -4,14 +4,16 @@
     - [Solution](#solution)
     - [Execution Details](#execution-details)
     - [Complexity](#complexity)
-  - [Variant.1 First Bad Version](#variant1-first-bad-version)
+  - [Example.1 First Bad Version](#example1-first-bad-version)
     - [Solution](#solution-1)
-  - [Variant.2 Rotated Sorted Array I](#variant2-rotated-sorted-array-i)
+  - [Example.2 Search a 2D Matrix](#example2-search-a-2d-matrix)
+  - [Example.3 Rotated Sorted Array I](#example3-rotated-sorted-array-i)
     - [Solution](#solution-2)
-  - [Variant.3 Rotated Sorted Array II](#variant3-rotated-sorted-array-ii)
+  - [Example.4 Rotated Sorted Array II](#example4-rotated-sorted-array-ii)
     - [Solution](#solution-3)
-  - [Variant.4 Median of Two Sorted Array](#variant4-median-of-two-sorted-array)
+  - [Example.5 Median of Two Sorted Arrays](#example5-median-of-two-sorted-arrays)
     - [Solution](#solution-4)
+
 ### Basic Version
 > [Leetcode: 704. Binary Search](https://leetcode.com/problems/binary-search/)
 
@@ -101,8 +103,9 @@ $$ \text{iteration}\ =\ \log_2 n$$
 2. Best-case: When the target is in the middle of array, $O(1)$.
 3. Worst-case: When the target is at either extremity of the array, the solution will go through all $\log_{2}{n}$ iterations.
    > Note: $\log_{a}{b}$ is pronounced "log base `a` of `b`".
-### Variant.1 First Bad Version
+### Example.1 First Bad Version
 > [Leetcode: 278. First Bad Version](https://leetcode.com/problems/first-bad-version/)  
+> One variation is [Leetcode: 875. Koko Eating Bananas](https://leetcode.com/problems/koko-eating-bananas/)
 
 Instead of sorted list, we have `n` versions `[1, 2, 3, ..., n]`, objective is to find the first bad one which all following ones are bad. 
 ```
@@ -127,7 +130,13 @@ Status   ✓  ✓  ✕  ✕  ...   ✕   ✕
 Until start and converge to two contiguous versions.
 - Scenario 1: `if isBadVersion(start)`, in this case 1st version is bad.
 - Scenario 2: `else`, `end` is the 1st bad version, with its previous version good. 
-### Variant.2 Rotated Sorted Array I
+
+### Example.2 Search a 2D Matrix
+> [Leetcode: 74. Search a 2D Matrix](https://leetcode.com/problems/search-a-2d-matrix/)
+
+> Important idea of successor/predecessor queries.
+
+### Example.3 Rotated Sorted Array I
 > [Leetcode: 33. Search in Rotated Sorted Array](https://leetcode.com/problems/search-in-rotated-sorted-array/)
 
 Given an ascending integer array `nums` with **distinct** values, rotated at random point (doesn't matter where). E.g. `[0, 1, 2, 4, 5, 6, 7]` after rotation became `[4, 5, 6, 7, 0, 1 ,2]`. Find index of integer `targe` if its in `nums`, or -1 if it is not in the array.
@@ -189,10 +198,10 @@ Given an ascending integer array `nums` with **distinct** values, rotated at ran
                                └─────────┘
     ``` 
 
-### Variant.3 Rotated Sorted Array II
+### Example.4 Rotated Sorted Array II
 > [Leetcode: 81. Search in Rotated Sorted Array II](https://leetcode.com/problems/search-in-rotated-sorted-array-ii/)
 
-Based on question [Variant.2](#variant2-rotated-sorted-array-i), but the elements can be the same (**not** necessarily **distinct**).
+Based on question [Example.3](#example3-rotated-sorted-array-i), but the elements can be the same (**not** necessarily **distinct**).
 ```
   index    0  1  2  3  4  5
   array   -1  0  0  1  2  2
@@ -218,6 +227,7 @@ while start < end and nums[end] == nums[end-1]:
     end -= 1
 ```
 
-### Variant.4 Median of Two Sorted Array
-> [Leetcode: ]()
+### Example.5 Median of Two Sorted Arrays
+> [Leetcode: 5. Median of Two Sorted Arrays](https://leetcode.com/problems/median-of-two-sorted-arrays/)
+
 #### Solution
