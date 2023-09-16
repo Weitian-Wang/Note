@@ -1,54 +1,60 @@
 ## Trees
 - [Trees](#trees)
-  - [Introduction](#introduction)
-    - [DFS \& BFS](#dfs--bfs)
-      - [DFS](#dfs)
-      - [BFS](#bfs)
-    - [Traversals](#traversals)
-      - [Inorder](#inorder)
-      - [Preorder](#preorder)
-      - [Postorder](#postorder)
-  - [Types of Tree Questions](#types-of-tree-questions)
-  - [Example.1 Invert Binray Tree](#example1-invert-binray-tree)
-    - [Solution](#solution)
-    - [Complexity](#complexity)
-  - [Example.2 Maximum Depth of Binary Tree](#example2-maximum-depth-of-binary-tree)
-    - [Solution](#solution-1)
-    - [Tricks to Talk it Through in Interview](#tricks-to-talk-it-through-in-interview)
-    - [Complexity](#complexity-1)
-  - [Example.3 Diameter of Binary Tree](#example3-diameter-of-binary-tree)
-    - [Solution](#solution-2)
-    - [Complexity](#complexity-2)
-  - [Example.4 Balanced Binary Tree](#example4-balanced-binary-tree)
-    - [Solution](#solution-3)
-    - [Complexity](#complexity-3)
-  - [Example.5 Same Tree](#example5-same-tree)
-    - [Solution](#solution-4)
-    - [Complexity](#complexity-4)
-  - [Example.6 Subtree of Another Tree](#example6-subtree-of-another-tree)
-    - [Solution](#solution-5)
-    - [Complexity](#complexity-5)
-  - [Example.7 Lowest Common Ancestor of a Binary Search Tree](#example7-lowest-common-ancestor-of-a-binary-search-tree)
-    - [Solution](#solution-6)
-    - [Complexity](#complexity-6)
-  - [Example.8 Binary Tree Order Level Traversal](#example8-binary-tree-order-level-traversal)
-    - [Solution](#solution-7)
-    - [Complexity](#complexity-7)
-  - [Example.9 Binary Tree Right Side View](#example9-binary-tree-right-side-view)
-    - [Solution](#solution-8)
-    - [Complexity](#complexity-8)
-  - [Example.10 Count Good Nodes in Binary Tree](#example10-count-good-nodes-in-binary-tree)
-    - [Solution](#solution-9)
-    - [Complexity](#complexity-9)
-  - [Example.11 Validate Binary Search Tree](#example11-validate-binary-search-tree)
-    - [Solution](#solution-10)
-    - [Complexity](#complexity-10)
-  - [Example.12 Kth Smallest Element in a BST](#example12-kth-smallest-element-in-a-bst)
-    - [Solution](#solution-11)
-    - [Complexity](#complexity-11)
-  - [Example.13 Construct Binary Tree from Preorder and Inorder Traversal](#example13-construct-binary-tree-from-preorder-and-inorder-traversal)
-    - [Solution](#solution-12)
-    - [Complexity](#complexity-12)
+	- [Introduction](#introduction)
+		- [DFS \& BFS](#dfs--bfs)
+			- [DFS](#dfs)
+			- [BFS](#bfs)
+		- [Traversals](#traversals)
+			- [Inorder](#inorder)
+			- [Preorder](#preorder)
+			- [Postorder](#postorder)
+	- [Types of Tree Questions](#types-of-tree-questions)
+	- [Example.1 Invert Binray Tree](#example1-invert-binray-tree)
+		- [Solution](#solution)
+		- [Complexity](#complexity)
+	- [Example.2 Maximum Depth of Binary Tree](#example2-maximum-depth-of-binary-tree)
+		- [Solution](#solution-1)
+		- [Tricks to Talk it Through in Interview](#tricks-to-talk-it-through-in-interview)
+		- [Complexity](#complexity-1)
+	- [Example.3 Diameter of Binary Tree](#example3-diameter-of-binary-tree)
+		- [Solution](#solution-2)
+		- [Complexity](#complexity-2)
+	- [Example.4 Balanced Binary Tree](#example4-balanced-binary-tree)
+		- [Solution](#solution-3)
+		- [Complexity](#complexity-3)
+	- [Example.5 Same Tree](#example5-same-tree)
+		- [Solution](#solution-4)
+		- [Complexity](#complexity-4)
+	- [Example.6 Subtree of Another Tree](#example6-subtree-of-another-tree)
+		- [Solution](#solution-5)
+		- [Complexity](#complexity-5)
+	- [Example.7 Lowest Common Ancestor of a Binary Search Tree](#example7-lowest-common-ancestor-of-a-binary-search-tree)
+		- [Solution](#solution-6)
+		- [Complexity](#complexity-6)
+	- [Example.8 Binary Tree Order Level Traversal](#example8-binary-tree-order-level-traversal)
+		- [Solution](#solution-7)
+		- [Complexity](#complexity-7)
+	- [Example.9 Binary Tree Right Side View](#example9-binary-tree-right-side-view)
+		- [Solution](#solution-8)
+		- [Complexity](#complexity-8)
+	- [Example.10 Count Good Nodes in Binary Tree](#example10-count-good-nodes-in-binary-tree)
+		- [Solution](#solution-9)
+		- [Complexity](#complexity-9)
+	- [Example.11 Validate Binary Search Tree](#example11-validate-binary-search-tree)
+		- [Solution](#solution-10)
+		- [Complexity](#complexity-10)
+	- [Example.12 Kth Smallest Element in a BST](#example12-kth-smallest-element-in-a-bst)
+		- [Solution](#solution-11)
+		- [Complexity](#complexity-11)
+	- [Example.13 Construct Binary Tree from Preorder and Inorder Traversal](#example13-construct-binary-tree-from-preorder-and-inorder-traversal)
+		- [Solution](#solution-12)
+		- [Complexity](#complexity-12)
+	- [Example.14 Binary Tree Maximum Path Sum](#example14-binary-tree-maximum-path-sum)
+		- [Solution](#solution-13)
+		- [Complexity](#complexity-13)
+	- [Example.15 Serialize and Deserialize Binary Tree](#example15-serialize-and-deserialize-binary-tree)
+		- [Solution](#solution-14)
+		- [Complexity](#complexity-14)
 
 
 ### Introduction
@@ -203,24 +209,131 @@ Use a global counter to keep track of the number of good nodes. Traverse the tre
 
 If value of current node is smaller than the minimum on path, its a good node. Increase the global counter and update the minimum value.  
 #### Complexity
-$O(n)$ where $n$ is the number of nodes in the binary tree.
+$O(n)$ where $n$ is the number of nodes in the binary tree.  
+
 ### Example.11 Validate Binary Search Tree
 > [Leetcode 98. Validate Binary Search Tree](https://leetcode.com/problems/validate-binary-search-tree/)  
 
+Given the `root` of a binary tree, determine if it is a valid binary search tree (BST).  
+
+Definition of **valid BST**: 
+1. All nodes on the left subtree of a node have smaller keys than the node
+2. All nodes on the right subtree of a node have larger keys than the node
+3. Both left and right subtrees are valid binary search trees
 
 #### Solution
+As we can see the definition of BTS is recursive. Therefore the validity of a BST can be checked recursively.  
+1. Start with `root` node, it can have any key between $-\infty$ and $+\infty$, set as its lower and upper bound
+2. As we traverse the left subtree of a node, update the upper bound with the node's value
+3. As we traverse the right subtree of a node, update the lower bound with the node's value
+Repeat the process with preorder traversal until we checked every node.  
+
+```python
+def checkValid(node, lower, upper):
+	# leaf node
+	if not node:
+		return True
+	# current node valid 
+	if lower < node.val < upper:
+		return checkValid(node.left, lower, node.val) and checkValid(node.right, node.val, upper)
+	# node invalid
+	else:
+		return False
+
+# call checkValid(root, float('-inf'), float('inf'))
+```
 #### Complexity
+$O(n)$ where $n$ is the number of nodes in the tree. 
 
 ### Example.12 Kth Smallest Element in a BST
 > [Leetcode 230. Kth Smallest Element in a BST](https://leetcode.com/problems/kth-smallest-element-in-a-bst/)  
 
+Given the `root` of a binary tree, and an integer $k$, return the $k^{th}$ smallest value (1-indexed) of all the values of the tree nodes. 
 
 #### Solution
+The inorder traversal of a binary search tree returns the values in a ascending oreder. 
+Few methods to retrieve the $k^{th}$ smallest value:
+- Put all values in a list and access $k^{th}$ with index
+- Push value into a min heap of size k when traversing the tree
+- Use a counter and global variable to record the $k^{th}$ smallest value
+
 #### Complexity
+Time complexity $O(n)$ where $n$ is the total number of nodes in the tree. Space complexity varies depending on the method.  
 
 ### Example.13 Construct Binary Tree from Preorder and Inorder Traversal
 > [Leetcode 105. Construct Binary Tree from Preorder and Inorder Traversal](https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/)
 
+Given two integer arrays `preorder` and `inorder` where `preoreder` is the preorder traversal of a binary tree and `inorder` is the inorder traversal of the same tree, construct and return the binary tree.  
+
 #### Solution
+1. Apparently the first node in the `preorder` corresponds to the value of the `root` node.  
+2. The array `inorder` can be divided into two subarrays by `root`, where the left subarray contains all node values from `root`'s left subtree and the right subarray contains all node values from `root`'s right subtree. 
+3. Edge case: if any subarray is empty the respective subtree is a `None` node
+4. Recursively solve both left and right subtrees
 
 #### Complexity
+$O(n)$ where $n$ is the total number of nodes. Worst case recursion depth $O(n)$ for binary trees that are skewed to one side.
+
+
+### Example.14 Binary Tree Maximum Path Sum
+> [Leetcode 124. Binary Tree Maximum Path Sum](https://leetcode.com/problems/binary-tree-maximum-path-sum/)
+
+A **path** in a binary tree is a sequence of nodes where each pair of adjacent nodes has a edge connecting them. A node can only appear in the sequence **at most once**.  
+The **path sum** of path is the sum of the node's values in the path.  
+Given the `root` of a binary tree return the maximum **path sum** of any none empty path.  
+#### Solution
+For any given tree, the maximum path sum can be produced from:
+1.  A path that includes `root`
+2.  A path on its left subtree
+3.  A path on its right subtree
+This applies for all of its subtrees.  
+
+We could use a global variable to track the overall maximum path sum.  
+In each recursive step, we return the maximum of the following three values to the parent node:
+1. A path sum containing current node and nodes from its left subtree
+2. A path sum containing current node and nodes form its right subtree
+3. 0, if all pathes containing current node have a negative sum, discard this path entirely
+> The partial path with nodes from nodes from **either** left or right subtree, so that the subroot is not duplicated when the parent node incorporate it in its path.  
+
+Solution code:  
+```python
+class Solution:
+    def maxPathSum(self, root: Optional[TreeNode]) -> int:
+		# none empty path, include a path even the sum is negative
+        rst = float('-inf')
+
+        def recurSum(node):
+            nonlocal rst
+            if not node:
+                return 0
+            left = recurSum(node.left)
+            right = recurSum(node.right)
+            rst = max(rst, left+right+node.val)
+			# the return value is nonnegative
+            return max(max(left, right) + node.val, 0)
+        
+        recurSum(root)
+        return rst
+```
+
+#### Complexity
+Time complexity of the solution is $O(n)$ where $n$ is the total number of nodes in the tree.  
+
+### Example.15 Serialize and Deserialize Binary Tree
+> [Leetcode 297. Serialize and Deserialize Binary Tree](https://leetcode.com/problems/serialize-and-deserialize-binary-tree/)
+
+Design a algorithm to serialize and deserialize a binary tree. Ensure that a binary tree can be serialized in to string and this string can be deserialized to the original binary tree structure.  
+#### Solution
+Initial thought:  
+Use the recursive construction method from [Example.13 Construct Binary Tree from Preorder and Inorder Traversal](#example13-construct-binary-tree-from-preorder-and-inorder-traversal). However as the nodes values are not unique in this problem, the forementioned solution can produce faulty results.
+
+Any Recursive Order traversal:  
+Keep record all nodes in the tree including all the `None` nodes when traversing the binary tree in which ever order. Reconstruct the binary tree in the same traverse order.  
+> Why this method works but in Example.13 both `inorder` and `preorder` are required? The extra `None` nodes contains enough information for reconstructing the binary tree.  
+> The utilization of `None` nodes is also the downside of this solution. As the tree gets larger, there is a large number of `None` nodes at the lowest level, slowing down the deserializing process.  
+
+Level order traversal:  
+Serialize all nodes in the binary tree including all the `None` nodes in the level order traversal order. Deserialize the tree from the string with level order traversal.  
+
+#### Complexity
+Time complexity of the all the solutions above is $O(n)$ where $n$ is the number of nodes on the binary tree including `None` nodes.  
