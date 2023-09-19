@@ -1,4 +1,3 @@
-## Trees
 - [Trees](#trees)
 	- [Introduction](#introduction)
 		- [DFS \& BFS](#dfs--bfs)
@@ -55,8 +54,19 @@
 	- [Example.15 Serialize and Deserialize Binary Tree](#example15-serialize-and-deserialize-binary-tree)
 		- [Solution](#solution-14)
 		- [Complexity](#complexity-14)
+- [Tries](#tries)
+	- [Introduction](#introduction-1)
+	- [Example.1 Implement Trie](#example1-implement-trie)
+		- [Solution](#solution-15)
+		- [Complexity](#complexity-15)
+	- [Example.2 Design Add and Search Words Data Structure](#example2-design-add-and-search-words-data-structure)
+		- [Solution](#solution-16)
+		- [Complexity](#complexity-16)
+	- [Example.3 Word Search II](#example3-word-search-ii)
+		- [Solution](#solution-17)
+		- [Complexity](#complexity-17)
 
-
+## Trees
 ### Introduction
 #### DFS & BFS
 ##### DFS
@@ -337,3 +347,69 @@ Serialize all nodes in the binary tree including all the `None` nodes in the lev
 
 #### Complexity
 Time complexity of the all the solutions above is $O(n)$ where $n$ is the number of nodes on the binary tree including `None` nodes.  
+
+## Tries
+### Introduction
+A **trie** is a k-ary search tree typically used for storing and retrieving string keys.  
+
+### Example.1 Implement Trie
+> [Leetcode 208. Implement Trie (Prefix Tree)](https://leetcode.com/problems/implement-trie-prefix-tree/)  
+
+A trie or prefix tree is a k-nary tree data structure used to efficiently store and retrieve keys from a dataset of strings.  
+Implement the `Trie` class with the following operations:
+1. `Trie()` initializes the trie object
+2. `boolean insert(String word)` inserts the word into the trie
+3. `boolean search(String word)` return `True` if `word` is in the trie
+4. `boolean startsWith(String prefix)` return `True` if there is a word in the tire that has the prefix `prefix`
+
+#### Solution
+Define a `TrieNode` class with two class attributes.
+1. A dictionary with letter as key and `TrieNode` object as value, to fulfill the k-nary branch structure. 
+2. A boolean `isWord` flag to indicate if there is a word end with current `TrieNode` object.  
+
+#### Complexity 
+Initializing the `Trie` takes $O(1)$ time.  
+Insertion of `word` takes $O(n)$ time where $n$ is the number of letters in the word.  
+Searching for `word` and `prefix` takes $O(n)$ time as well.  
+
+A trie with $N$ nodes has the worst case space complexity of $O(N\times k)$, where $k$ is the number of unique characters in the given alphabet.  
+
+### Example.2 Design Add and Search Words Data Structure
+> [Leetcode: 211. Design Add and Search Words Data Structure](https://leetcode.com/problems/design-add-and-search-words-data-structure/)  
+
+Based on [Example.1 Implement Trie](#example1-implement-trie), modify the search function to search for `word` that may contain `.` where dots can be matched with any letter.  
+
+#### Solution
+Instead of search for the `word` in a linear fashion, use a list to store all possible search paths and do a breadth first search (BFS).  
+#### Complexity
+The search method has a worst case time complexity of $O(N\times k)$ which is $O(N)$ asymptotically. $N$ is the number of letters in the target word and $k$ is the size of the alphabet.  
+
+### Example.3 Word Search II
+> [Leetcode 212. Word Search II]([Example.1 Implement Trie](#example1-implement-trie))  
+
+A hard problem as it combines both DFS and Trie techniques. 
+
+Given an `m x n` `board` of characters and a list of strings `words`, return all words on the `board`.  
+Each word must be constructed from letters of sequentially **adjacent** cells, where **adjacent** cells are either horizontally or vertically neighboring. The same letter in a cell can only be used at most once to construct a word.  
+
+#### Solution
+Why use trie instead of set to store all `words`?  
+With trie we can check if the sequence is a prefix, eliminating unnecessary search paths.  
+
+How to ensure the cell is visited only once in constructing the word?  
+In DFS process, use a global `visited` set to store the indices of all visited cells. Add the indices of the current cell upon DFS call, and remove them from set before exiting the DFS call.  
+> If we don't remove the indices from the set, the cell would become unavailable for other search paths with branched from the same DSF origin.  
+> ```
+> word 'ad' and 'abcd', with same DFS starting point (0, 0)
+>   0 1
+> 0 a b
+> 1 d c
+> ```  
+
+How to eliminate duplicated words?  
+Use a set to store the result is one obvious solution but it is not efficient enough. In order to eliminate duplicated DFS to speed up the search, we remove the word from the trie after the first encounter.  
+Starting from the bottom of the word, remove the node if the node is a leaf node.  
+
+#### Complexity
+The time complexity of building a trie is $O(N\times\text{AvgL})$, where $N$ is the number of string keys in the set and $\text{AvgL}$ is the average length of the strings.  
+Overall time complexity of this problem is $O(l\times\text{\#words})$, length of the word times the number of words.  
