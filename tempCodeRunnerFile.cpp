@@ -1,0 +1,1 @@
+if(0x0 == bitmap) return -1;

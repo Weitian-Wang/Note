@@ -326,9 +326,9 @@ class class_name{
   data_type data_member;
   // constructor
   class_name(para1, para2, ...){
-    this.member1 = para1;
-    this.member2 = para2;
-    // this is a keyword refers to current instance of the class
+    this->member1 = para1;
+    this->member2 = para2;
+    // this is a pointer to current instance of the class
   }
   // destructor
   ~class_name(){

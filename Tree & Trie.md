@@ -385,7 +385,7 @@ Instead of search for the `word` in a linear fashion, use a list to store all po
 The search method has a worst case time complexity of $O(N\times k)$ which is $O(N)$ asymptotically. $N$ is the number of letters in the target word and $k$ is the size of the alphabet.  
 
 ### Example.3 Word Search II
-> [Leetcode 212. Word Search II]([Example.1 Implement Trie](#example1-implement-trie))  
+> [Leetcode 212. Word Search II](https://leetcode.com/problems/word-search-ii)  
 
 A hard problem as it combines both DFS and Trie techniques. 
 
