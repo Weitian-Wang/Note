@@ -47,6 +47,20 @@ int main(int argc, char **argv)
 	printf("%d\n", index_search(0x4000000000000000));
 	printf("%d\n", index_search(0x8000000000000000));
 	printf("%d\n", index_search(0x0000010000000000));
-	
+	/* 
+    -1
+    0
+    0
+    0
+    1
+    2
+    1
+    3
+    60
+    61
+    62
+    63
+    40
+     */
     return 0;
 }

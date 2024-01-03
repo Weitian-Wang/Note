@@ -12,7 +12,7 @@
     - [Complexity](#complexity-1)
   - [Example 4. Container With Most Water](#example-4-container-with-most-water)
     - [Solution](#solution-3)
-  - [Example 4. Trapping Rain Water](#example-4-trapping-rain-water)
+  - [Example 5. Trapping Rain Water](#example-5-trapping-rain-water)
     - [Solution](#solution-4)
       - [Solution 1](#solution-1)
       - [Solution 2](#solution-2)
@@ -99,7 +99,7 @@ A $O(n^2)$ brute force solution would be searching through every possible combin
 3. If `height[i]` < or <= `height[j]` move i forward
 4. If `height[i]` >= or > `height[j]` move j backward
 
-### Example 4. Trapping Rain Water
+### Example 5. Trapping Rain Water
 > [Leetcode: 42. Trapping Rain Water](https://leetcode.com/problems/trapping-rain-water/)  
 
 Given `n` non-negative integers representing an elevation map where the width of each bar is `1`, compute how much water can be trapped after rain.  
@@ -123,3 +123,4 @@ Each time advance the side that has smaller max value.
 The naive solution requires find left max, right max for each position, which is $O(n^2)$.  
 For solution 1, we need 3 linear iteration $O(n)$ and two extra size-n array $O(n)$.  
 The time complexity of solution 2 is $O(n)$ time, with only one iteration for each item.  
+
